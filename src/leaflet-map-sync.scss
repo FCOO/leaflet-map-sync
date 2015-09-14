@@ -1,0 +1,36 @@
+/***********************************************
+leaflet-map-sync.scss, Sync two or more maps with regard to center, zoom and pan
+
+	(c) 2015, Niels Holt
+
+	https://github.com/NielsHolt/leaflet-map-sync
+	https://github.com/NielsHolt
+
+
+************************************************/
+//BOURBON - http://bourbon.io/
+@import "../bower_components/bourbon/app/assets/stylesheets/bourbon";
+
+
+.leaflet-cursor-pane {z-index:10000}
+
+.map-sync-cursor-icon {
+	width:20px;
+	height:20px;
+	position: absolute;
+	z-index: 10000;
+//	background-color: red;
+	display: none;
+
+	.map-sync-active & {
+		//background-color: green !important;
+		//display: block;
+	}
+
+	.map-sync-passive & {
+		background-color: yellow;
+		display: block;
+	}
+
+}
+

@@ -1,0 +1,33 @@
+{
+  "name": "leaflet-map-sync",
+  "version": "0.0.1",
+  "description": "package.json is only use for building the package. see bower.json for more info",
+  "main": "dist/leaflet-map-sync.min.js",
+  "devDependencies": {
+    "bourbon": "latest",
+    "modernizr-mixin": "latest",
+    "mathsass": "latest",
+    "jshint": "latest",
+    "uglifyjs": "latest"
+  },
+  "jshintConfig": {
+    "globals": {
+      "L": false,
+      "$": false,
+			"jQuery": false,
+      "console": false,
+      "DEBUG": false,
+			"document": false,
+			"alert"		: false
+    },
+    "undef": true,
+    "unused": true
+  },
+  "scripts": {
+    "lint": "jshint src/leaflet-map-sync.js",
+    "build:css": "sass src/leaflet-map-sync.scss dist/leaflet-map-sync.min.css --style compressed",
+		"build:js": "uglifyjs src/leaflet-map-sync.js -c -m -o dist/leaflet-map-sync.min.js",
+    "build": "npm run build:css && npm run build:js",
+    "prebuild:js": "npm run lint"
+  }
+}

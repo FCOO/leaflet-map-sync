@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAcA,oBAAqB,CAAC,OAAO,CAAC,KAAK,CAEnC,qBAAsB,CACrB,KAAK,CAAC,IAAI,CACV,MAAM,CAAC,IAAI,CACX,QAAQ,CAAE,QAAQ,CAClB,OAAO,CAAE,KAAK,CAEd,OAAO,CAAE,IAAI,CAOb,uCAAoB,CACnB,gBAAgB,CAAE,MAAM,CACxB,OAAO,CAAE,KAAK",
+"sources": ["leaflet-map-sync.scss"],
+"names": [],
+"file": "leaflet-map-sync.min.css"
+}

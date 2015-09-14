@@ -1,0 +1,30 @@
+/***********************************************
+leaflet-map-sync.scss, Sync two or more maps with regard to center, zoom and pan
+
+	(c) 2015, Niels Holt
+
+	https://github.com/NielsHolt/leaflet-map-sync
+	https://github.com/NielsHolt
+
+
+************************************************/
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/web-dev\/leaflet-map-sync\/src\/leaflet-map-sync\.scss}line{font-family:\0000315}}
+.leaflet-cursor-pane {
+  z-index: 10000;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/web-dev\/leaflet-map-sync\/src\/leaflet-map-sync\.scss}line{font-family:\0000317}}
+.map-sync-cursor-icon {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  z-index: 10000;
+  display: none;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/web-dev\/leaflet-map-sync\/src\/leaflet-map-sync\.scss}line{font-family:\0000330}}
+.map-sync-passive .map-sync-cursor-icon {
+  background-color: yellow;
+  display: block;
+}
+
+/*# sourceMappingURL=leaflet-map-sync.css.map */
