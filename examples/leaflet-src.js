@@ -2083,7 +2083,7 @@ L.Map = L.Class.extend({
 
 		this.fire('move');
 
-		if (zoomChanged || afterZoomAnim) {
+		if (zoomChanged || afterZoomAnim) { 
 			this.fire('zoomend');
 		}
 
@@ -7600,6 +7600,7 @@ L.Map.BoxZoom = L.Handler.extend({
 	},
 
 	_finish: function () {
+
 		if (this._moved) {
 			this._pane.removeChild(this._box);
 			this._container.style.cursor = '';
@@ -7621,7 +7622,9 @@ L.Map.BoxZoom = L.Handler.extend({
 		var map = this._map,
 		    layerPoint = map.mouseEventToLayerPoint(e);
 
-		if (this._startLayerPoint.equals(layerPoint)) { return; }
+		if (this._startLayerPoint.equals(layerPoint)) { 
+			return; 
+		}
 
 		var bounds = new L.LatLngBounds(
 		        map.layerPointToLatLng(this._startLayerPoint),
