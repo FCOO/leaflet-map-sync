@@ -10,7 +10,7 @@ Based on the great [Leaflet.Sync](https://github.com/turban/Leaflet.Sync) by [Bj
 `bower install https://github.com/NielsHolt/leaflet-map-sync.git --save`
 
 ## Demo
-NielsHolt.github.io/leaflet-map-sync/examples/
+http://NielsHolt.github.io/leaflet-map-sync/examples/
 
 ## Usage
 ```
