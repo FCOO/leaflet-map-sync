@@ -56,6 +56,7 @@
 
 			map._panes.markerPane.removeChild( map.mapSync_cursorMarker._icon );
 			map._panes.popupPane.appendChild( map.mapSync_cursorMarker._icon );
+			map.mapSync_cursorMarker._icon.style.zIndex = 1000;
 
 			map.on('mouseover', function( /*mouseEvent*/ ){ 
 				//Add passive-class to all sibling-maps
