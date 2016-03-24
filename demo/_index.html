@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="da" style="font-size: 100%">
+<head>
+	<title>fcoo.dk - leaflet-map-sync - Demo</title>
+	<meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta http-equiv='x-dns-prefetch-control' content='on'>
+
+	<meta name='copyright' content='FCOO'>
+	<meta name='owner' content='FCOO'>
+
+  <link  href="bower_components.css" rel="stylesheet">	
+  <link  href="../src/leaflet-map-sync.css" rel="stylesheet">	
+</head>
+
+<body>
+	<div id="map" style="width: 800px; height: 600px"></div>
+
+
+	
+	
+	<script src="bower_components.js"></script>
+	<script src="../src/leaflet-map-sync.js"></script>
+	<script>
+		$(function() {
+			var map = L.map('map').setView([56.2, 11.5], 6);
+			L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				maxZoom: 18,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors</a>'
+      }).addTo(map);
+
+			var myMapSync = new L.MapSync( /*options*/ );
+			myMapSync.addTo(map);
+    });
+
+	</script>
+</body>
+</html>

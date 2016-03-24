@@ -1,15 +1,21 @@
 /***********************************************
 leaflet-map-sync.scss, Sync two or more maps with regard to center, zoom and pan
 
-	(c) 2015, Niels Holt
+	(c) 2015, FCOO
 
-	https://github.com/NielsHolt/leaflet-map-sync
-	https://github.com/NielsHolt
+	https://github.com/fcoo/leaflet-map-sync
+	https://github.com/fcoo
 
 
 ************************************************/
 //BOURBON - http://bourbon.io/
 @import "../bower_components/bourbon/app/assets/stylesheets/bourbon";
+
+//MODERNIZR-MIXIN - https://github.com/danielguillan/modernizr-mixin
+@import "../bower_components/modernizr-mixin/stylesheets/modernizr";
+
+//MATHSASS - https://github.com/terkel/mathsass
+@import "../bower_components/mathsass/dist/math";
 
 
 //Embedded icon-font from icomoon converted to embedded via fontello.com

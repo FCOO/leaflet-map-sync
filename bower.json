@@ -1,25 +1,33 @@
 {
-  "name": "leaflet-map-sync",
-  "version": "0.0.3",
-  "homepage": "https://github.com/NielsHolt/leaflet-map-sync",
+  "name"		: "leaflet-map-sync",
+  "version"	: "0.0.0",
+  "homepage": "https://github.com/FCOO/leaflet-map-sync",
   "authors": [
-    "Niels Holt <niels@steenbuchholt.dk>"
+    "NielsHolt"
   ],
-  "description": "Description from README.md",
+  "description": "",
   "main": [
     "dist/leaflet-map-sync.min.js",
     "dist/leaflet-map-sync.min.css"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/NielsHolt/leaflet-map-sync.git"
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/FCOO/leaflet-map-sync.git"
+	},
+
+	"dependencies": {
+		"jquery": "latest",
+    "leaflet": "latest"
+	},
+
+	"devDependencies": {
+    "bourbon": "latest",
+		"modernizr-mixin": "latest",
+		"mathsass": "latest"
   },
-  "dependencies": {
-    "jquery": "^1.9",
-    "leaflet": "^0.7.3",
-    "moment": "^2.9.0"
-  },
-  "license": "MIT",
+	
+	"license": "MIT",
+
   "ignore": [
     "**/.*",
     "node_modules",
@@ -29,8 +37,5 @@
   ],
   "moduleType": [
     "es6"
-  ],
-  "devDependencies": {
-    "bourbon": "~4.2.4"
-  }
+  ]
 }

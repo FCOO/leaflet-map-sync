@@ -1,4 +1,8 @@
 # leaflet-map-sync
+>
+
+
+## Description
 Sync two or more maps with regard to center, zoom and pan.
 When the cursor is over one of the maps a 'shadow cursor' is shown in the other maps.
 The shape of the 'shadow cursor' is set with the `options.shadowCursor` 
@@ -7,59 +11,52 @@ Based on the great [Leaflet.Sync](https://github.com/turban/Leaflet.Sync) by [Bj
 
 ## Installation
 ### bower
-`bower install https://github.com/NielsHolt/leaflet-map-sync.git --save`
+`bower install https://github.com/FCOO/leaflet-map-sync.git --save`
 
 ## Demo
-http://NielsHolt.github.io/leaflet-map-sync/examples/
+http://FCOO.github.io/leaflet-map-sync/demo/ 
 
 ## Usage
-```
-var mapSync = new L.MapSync( options );
+	var mapSync = new L.MapSync( options );
+	mapSync.add(map);
+	mapSync.add(map2);
+	mapSync.add(map3);
 
-mapSync.add(map);
-mapSync.add(map2);
-mapSync.add(map3);
-```
-## options
+### options
 
     {shadowCursor: "hand"}
 possible values (default: `"hand"`):
-<table>
-<tr><td><code>"hand"</code></td><td><img src="readme.md-images/hand.png"></td></tr>
-<tr><td><code>"crosshairs"</code></td><td><img src="readme.md-images/crosshairs.png"></td></tr>
-<tr><td><code>"cross"</code></td><td><img src="readme.md-images/cross.png"></td></tr>
-<tr><td><code>"cursor"</code></td><td><img src="readme.md-images/cursor.png"></td></tr>
-<tr><td><code>"cursor-full"</code></td><td><img src="readme.md-images/cursor-full.png"></td></tr>
-</table>
 
-## ToDo
+| `shadowCursor` |  |
+| :--: | :--: | :-----: | --- |
+| `"hand"` | <img src="readme.md-images/hand.png"> |
+| `"crosshairs"` | <img src="readme.md-images/crosshairs.png"> |
+| `"cross"` | <img src="readme.md-images/cross.png"> |
+| `"cursor"` | <img src="readme.md-images/cursor.png"> |
+| `"cursor-full"` | <img src="readme.md-images/cursor-full.png"> |
+
+### Methods
 
 New methods:
-```
-    MapSync.remove( map );
-	MapSync.disable( map );
-	MapSync.enable( map );
-```
+	
+	MapSync.forEachMap( function( map, index ) ); //Call the function wth each map
+	MapSync.remove( map ); 	//TODO
+	MapSync.disable( map );	//TODO
+	MapSync.enable( map );	//TODO
+
 
 ## Copyright and License
-This plugin is licensed under the [MIT license](https://github.com/NielsHolt/leaflet-map-sync/LICENSE).
+This plugin is licensed under the [MIT license](https://github.com/FCOO/leaflet-map-sync/LICENSE).
 
-Copyright (c) 2015 [Niels Holt](https://github.com/NielsHolt)
+Copyright (c) 2015 [FCOO](https://github.com/FCOO)
 
 ## Contact information
 
-Niels Holt <niels@steenbuchholt.dk>
+NielsHolt nho@fcoo.dk
 
 
 ## Credits and acknowledgements
-[Bjorn Sandvik](https://github.com/turban/)
 
-
-## Known bugs
-
-## Troubleshooting
-
-## Changelog
-
+[Leaflet.Sync](https://github.com/turban/Leaflet.Sync) by [Bjorn Sandvik](https://github.com/turban/)
 
 
