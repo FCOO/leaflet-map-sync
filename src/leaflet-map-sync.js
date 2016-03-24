@@ -21,7 +21,7 @@
 				'hand'				: L.divIcon({className: 'map-sync-cursor-icon icon-hand',					iconSize:iconSize}),
 				'cursor'			: L.divIcon({className: 'map-sync-cursor-icon icon-cursor',				iconSize:iconSize, iconAnchor: cursorAnchor	}),
 				'cursor-full'	: L.divIcon({className: 'map-sync-cursor-icon icon-cursor-full',	iconSize:iconSize, iconAnchor: cursorAnchor	}),
-	};
+			};
 
 	L.MapSync = L.Class.extend({
 
@@ -53,8 +53,8 @@
 			map.mapSync = this;
 			map.options = map.options || {};
 			map.options.mapSync = {
-				enabled: true;
-			}
+				enabled: true
+			};
 
 			//Create a marker to be used as 'shadow' cursor and move it to a popupPane to make the cursor apear over the popups
 			map.mapSync_cursorMarker = L.marker(map.getCenter()).addTo(map);
@@ -65,10 +65,36 @@
 			map._panes.popupPane.appendChild( map.mapSync_cursorMarker._icon );
 			map.mapSync_cursorMarker._icon.style.zIndex = 1000;
 
-			map.on('mouseover', function( /*mouseEvent*/ ){
+
+
+			//Adds mouseover-event to different panes to trace current cursor
+			var panes = [
+				map._container,
+				map._controlContainer,
+				map._panes.popupPane
+			];
+			var mouseOverFunction = L.Util.bind( this._changeCursorOnMouseOver, this );
+			for (var i=0; i<panes.length; i++ )
+				$(panes[i]).on('mouseover', mouseOverFunction );
+
+
+/*
+			var panes = map.getPanes();
+			for (var pane in panes){
+				$( panes[pane] ).on('mouseover', function( mouseEvent ){
+				//Save the cursor-style
+				var cursor = $(mouseEvent.target).css('cursor');//.style.cursor;
+					console.log(cursor);//mouseEvent.target);
+				});
+			}
+*/
+
+
+			map.on('mouseover', function( mouseEvent ){
 				//Add passive-class to all sibling-maps
 				this.mapSync._forEachMap(	function(map){ L.DomUtil.addClass( map.getContainer(), 'map-sync-passive'); }, null, this );
 			});
+
 			map.on('mouseout', function( /*mouseEvent*/ ){
 				//Remove passive-class from all maps
 				this.mapSync._forEachMap( function(map) { L.DomUtil.removeClass( map.getContainer(), 'map-sync-passive'); } );
@@ -133,7 +159,7 @@
 		_getMapIndex: function( map ){
 			var i;
 			for (var i=0; i<this.list.length; i++ )
-				if (this.list[i] == map
+				if (this.list[i] == map)
 					return i;
 			return -1;
 		},
@@ -179,6 +205,15 @@
 					mapFunction.apply(undefined, nextArg.concat(arg) );
 				}
 			}
+		},
+
+		//_changeCursorOnMouseOver
+		_changeCursorOnMouseOver: function( mouseEvent ){
+			//Save the cursor-style
+			var cursor = $(mouseEvent.target).css('cursor');//.style.cursor;
+			this._changeCursor( 'hand' /*cursor*/ );
+					console.log(cursor);//mouseEvent.target);
+$('#map4').text(cursor);
 		},
 
 		//_changeCursor

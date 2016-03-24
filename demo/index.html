@@ -27,6 +27,8 @@
 	<div id="map2" class="map-container"></div>
 	<div id="map3" class="map-container"></div>
 
+	<div id="map4" class="map-container"></div>
+
 	<script src="bower_components.js"></script>
 	<script src="../src/leaflet-map-sync.js"></script>
 
@@ -59,7 +61,7 @@
 			{	maxZoom: 14, attribution: 'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'}
 		).addTo(map3);
 
-/*		
+		
 		L.circle([51.508, -0.11], 500, {
 			color: 'red',
 			fillColor: '#f03',
@@ -83,7 +85,7 @@
 		}
 
 		map.on('click', onMapClick);
-*/
+
 		var mapSync = new L.MapSync({ });
 		mapSync.add(map);
 		mapSync.add(map2);
