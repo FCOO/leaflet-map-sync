@@ -51,6 +51,10 @@
 				map.setView(this.masterMap.getCenter(), this.masterMap.getZoom(), {animate:false, reset:true});
 
 			map.mapSync = this;
+			map.options = map.options || {};
+			map.options.mapSync = {
+				enabled: true;
+			}
 
 			//Create a marker to be used as 'shadow' cursor and move it to a popupPane to make the cursor apear over the popups
 			map.mapSync_cursorMarker = L.marker(map.getCenter()).addTo(map);
@@ -123,6 +127,46 @@
 			map.on('boxzoomend', function(){ this.mapSync.onlySetViewOnTarget = false; });
 
 		},
+
+		//**************************************************************************
+		//_getMapIndex( map )
+		_getMapIndex: function( map ){
+			var i;
+			for (var i=0; i<this.list.length; i++ )
+				if (this.list[i] == map
+					return i;
+			return -1;
+		},
+
+
+		//**************************************************************************
+		//remove( map )
+		remove: function( map ){
+			var index = this._getMapIndex( map );
+			if (index > -1)
+				this.list.splice(index, 1);
+		},
+
+		//**************************************************************************
+		//disable( map );
+		disable: function( map ){
+			map.options.mapSync.enabled = false;
+		},
+
+		//**************************************************************************
+		//enable( map );
+		enable: function( map ){
+			map.options.mapSync.enabled = true;
+		},
+
+		//**************************************************************************
+		//forEachMap( function( map, index ) ) - Call the function wth each map
+		forEachMap: function( mapFunction ){
+			for (var i=0; i<this.list.length; i++ ){
+				mapFunction( this.list[i], i );
+			}
+		},
+
 
 		//**************************************************************************
 		//_forEachMap

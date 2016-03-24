@@ -37,12 +37,11 @@ possible values (default: `"hand"`):
 
 ### Methods
 
-New methods:
-	
+	MapSync.add( map ); //Adds map to the sync	
 	MapSync.forEachMap( function( map, index ) ); //Call the function wth each map
-	MapSync.remove( map ); 	//TODO
-	MapSync.disable( map );	//TODO
-	MapSync.enable( map );	//TODO
+	MapSync.remove( map ); 	//Remove the map from the sync
+	MapSync.disable( map );	//Disables the map from the sync
+	MapSync.enable( map );	//Enables the map to the sync
 
 
 ## Copyright and License
