@@ -1,10 +1,10 @@
 @font-face {
     font-family: 'icomoon';
-    src:    url('fonts/icomoon.eot?rdro3n');
-    src:    url('fonts/icomoon.eot?rdro3n#iefix') format('embedded-opentype'),
-        url('fonts/icomoon.ttf?rdro3n') format('truetype'),
-        url('fonts/icomoon.woff?rdro3n') format('woff'),
-        url('fonts/icomoon.svg?rdro3n#icomoon') format('svg');
+    src:    url('fonts/icomoon.eot?54vkme');
+    src:    url('fonts/icomoon.eot?54vkme#iefix') format('embedded-opentype'),
+        url('fonts/icomoon.ttf?54vkme') format('truetype'),
+        url('fonts/icomoon.woff?54vkme') format('woff'),
+        url('fonts/icomoon.svg?54vkme#icomoon') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -27,14 +27,38 @@
 .icon-stretch:before {
     content: "\e900";
 }
+.icon-spinner2:before {
+    content: "\eb23";
+}
+.icon-zoom-in3:before {
+    content: "\eb38";
+}
+.icon-zoom-out3:before {
+    content: "\eb39";
+}
 .icon-cursor3:before {
     content: "\ed26";
 }
 .icon-cursor22:before {
     content: "\ed27";
 }
+.icon-pointer:before {
+    content: "\ed30";
+}
+.icon-hand:before {
+    content: "\ed39";
+}
+.icon-grab:before {
+    content: "\ed3a";
+}
 .icon-move:before {
     content: "\ed4d";
+}
+.icon-plus:before {
+    content: "\ed59";
+}
+.icon-plus3:before {
+    content: "\ed5d";
 }
 .icon-blocked:before {
     content: "\ed67";
@@ -45,20 +69,11 @@
 .icon-arrow-resize6:before {
     content: "\ee00";
 }
-.icon-plus:before {
-    content: "\e601";
+.icon-arrow-resize7:before {
+    content: "\ee01";
 }
-.icon-grab:before {
-    content: "\e602";
-}
-.icon-hand:before {
-    content: "\e603";
-}
-.icon-cursor:before {
-    content: "\e604";
-}
-.icon-cursor2:before {
-    content: "\e605";
+.icon-arrow-resize8:before {
+    content: "\ee02";
 }
 .icon-crosshairs:before {
     content: "\e600";
