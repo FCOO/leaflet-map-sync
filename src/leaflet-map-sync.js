@@ -455,9 +455,16 @@
 		//**************************************************************************
 		//_setCursorFromElement
 		_setCursorFromElement: function( element ){
-			var cursor = $(element).css('cursor'),
-					newIconName = cssCursorToIconName[ cursor ] || 'default';
-			this._changeCursor( newIconName );
+			var cursor = $(element).css('cursor');
+					
+			//Adjust 'auto' to specific tagName (primary IE)
+			if (cursor == 'auto'){
+			  switch (element.tagName.toUpperCase()){
+			    case 'A': cursor = 'pointer'; break;
+			  }
+			  
+			}
+			this._changeCursor( cssCursorToIconName[ cursor ] || 'default' );
 		},
 
 		//**************************************************************************
