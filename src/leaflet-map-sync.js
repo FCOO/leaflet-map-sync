@@ -107,7 +107,7 @@
 
 			this.masterMap =	this.masterMap ? this.masterMap : map;
 			if (map != this.masterMap)
-				map.setView(this.masterMap.getCenter(), this.masterMap.getZoom(), NO_ANIMATION/*{animate:false, reset:true}*/);
+				map.setView(this.masterMap.getCenter(), this.masterMap.getZoom(), NO_ANIMATION );
 
 			map.mapSync = this;
 			map.options = map.options || {};
@@ -209,14 +209,22 @@
 				this.mapSync.onlySetViewOnTarget = false;
 			});
 
-			map.on('zoomend', function( /*event*/ ){
+			map.on('zoomend dragend', function( /*event*/ ){
 				//call setView for all maps (except the target)
-				if (this.options.mapSync.enabled)
-					this.mapSync._forEachMap({
-						mapFunction	: function( map, activeMap ) { map.setView(activeMap.getCenter(), activeMap.getZoom(), NO_ANIMATION/*{animate: false,reset: false}*/); },
-						arguments		: [this],
+				if (this.options.mapSync.enabled){
+					this.mapSync._updateMap( map );
+/*
+				this.mapSync._forEachMap({
+						mapFunction	: function( map, activeMap, activeCenter, activeZoom ) { 
+							if ((!map.getCenter().equals( activeCenter )) || (map.getZoom() != activeZoom)){
+								map.setView(activeCenter, activeZoom, NO_ANIMATION ); 
+							}
+						},
+						arguments		: [this, map.getCenter(), map.getZoom()],
 						excludeMap	: this
 				});
+*/
+				}
 			});
 
 
@@ -261,12 +269,12 @@
 			// the following workaround is implemented:
 			// The shadow-cursor is hidden when zoom or move startes.
 			// When zoom or move endes the shadow-cursor is shown again the first time the mouse is moved
-			map.on('zoomstart movestart', function(){
+			map.on('zoomstart dragstart movestart', function(){
 				if (map.options.mapSync.enabled){
 					map.mapSync.hide();
 				}
 			});
-			map.on('zoomend moveend', function(){
+			map.on('zoomend dragend moveend', function(){
 				if (map.options.mapSync.enabled){
 					map.mapSync._showOnFirstMove();
 				}
@@ -359,16 +367,10 @@
 			//Check if map has been added to a MapSync-object
 			if (map.options && map.options.mapSync && map.mapSync == this){
 
-				//Find the first (if any) enabled map and sync the map with that map
-				var i, nextMap;
-				for (i=0; i<this.list.length; i++ ){
-					nextMap = this.list[i];
-					if ((nextMap != map) && (nextMap.options.mapSync.enabled)){
-						map.setView(nextMap.getCenter(), nextMap.getZoom(), NO_ANIMATION/*{animate:false, reset:true}*/);
-						break;
-					}
-				}
-
+				//Find a enabled map (if any) and sync the map with that map
+				var currentMap = null;
+				map.mapSync._forEachMap({ mapFunction	: function( map ) { currentMap = map.options.mapSync.enabled ? map : currentMap } });
+	
 				map.options.mapSync.$map_container.addClass( 'map-sync-enabled' );
 				map.options.mapSync.enabled = true;
 
@@ -380,9 +382,10 @@
 					}
 				});
 	
+				//Update the map
+				if (currentMap)
+					this._updateMap( currentMap );
 				this._showOnFirstMove();
-			
-			
 			}
 		},
 
@@ -468,6 +471,21 @@
 			});
 		},
 
+
+		//**************************************************************************
+		//_updateMap - Update the center and zoom for all enabled maps to be equal currentMap
+		_updateMap: function( currentMap ){
+			//call setView for all maps (except the target)
+			this._forEachMap({
+				mapFunction	: function( map, activeCenter, activeZoom ) { 
+					if ((!map.getCenter().equals( activeCenter )) || (map.getZoom() != activeZoom)){
+						map.setView(activeCenter, activeZoom, NO_ANIMATION ); 
+					}
+				},
+				arguments		: [currentMap.getCenter(), currentMap.getZoom()],
+				excludeMap	: currentMap
+			});
+		},
 
 		//**************************************************************************
 		//_updateCursor - Update the latlng-position of all the shadow-cursors

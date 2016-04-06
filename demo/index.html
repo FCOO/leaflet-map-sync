@@ -131,10 +131,18 @@
 		mapSync.add(map2);
 		mapSync.add(map3);
 
-//map1.on('viewreset movestart move	moveend	dragstart	drag dragend zoomstart zoomend zoomlevelschange	resize autopanstart', function( event ){
-//map1.on('zoomstart viewreset moveend	dragend zoomend resize autopanstart', function( event ){
-//	console.log(event.type);
-//});
+var eventFunc = function( event ){
+	//map1.on('zoomstart viewreset moveend	dragend zoomend resize autopanstart', function( event ){
+	var center1 = map1.getCenter(), 
+			center2 = map2.getCenter();
+			if ( true || (center1.lat != center2.lat) || (center1.lng != center2.lng) ){
+//				console.log(this._leaflet_id, event.type, center1, center2);
+			  
+			}
+};
+var events = 'viewreset _movestart _move	moveend	dragstart	_drag dragend zoomstart zoomend zoomlevelschange	resize autopanstart';
+map1.on(events, eventFunc);
+map2.on(events, eventFunc);
 
 
 	</script>
