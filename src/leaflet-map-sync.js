@@ -221,7 +221,7 @@
 
 
 
-		/*******************************************************
+			/*******************************************************
 			Create and add events and overwrite methods to show, hide,
 			and update 'shadow' cursors
 			********************************************************/
@@ -253,11 +253,8 @@
 			map.on('mousemove', function( mouseEvent ){
 				//Update the position of the shadow-cursor
 				if (map.options.mapSync.enabled)
-					map.mapSync._forEachMap({
-						mapFunction	: function( map, latlng ) { map.options.mapSync.cursorMarker.setLatLng( latlng ); },
-						arguments		: [mouseEvent.latlng],
-						inclDisabled: true
-				});
+					//Not used at the moment: map.options.mapSync.containerPoint = mouseEvent.containerPoint;
+					map.mapSync._updateCursor( mouseEvent.latlng );
 			});
 
 			// Since no mousemove-event is fired when the map is panned or zoomed using the keyboard,
@@ -275,6 +272,33 @@
 				}
 			});
 
+
+			//*******************************************************
+			//Overwrite map.keyboard._onKeyDown to update cursor on pan by keyboard - NOT USED because it makes the cursor blink
+/*
+			map.keyboard._onKeyDown =
+				function( _onKeyDown ){
+					return function(){
+						//Original function/method
+						_onKeyDown.apply(this, arguments);
+
+						//Find the map with the mouse over (if any)
+						var mapWithMouseOver = null;
+						map.mapSync._forEachMap({
+							mapFunction	: function( map ) { 
+								if (map.options.mapSync.$map_container.hasClass( 'map-sync-mouseover' ) )
+									mapWithMouseOver = map;
+							}
+						});
+						if (mapWithMouseOver){
+							var newLatLng = mapWithMouseOver.containerPointToLatLng(mapWithMouseOver.options.mapSync.containerPoint) ;
+							map.mapSync._updateCursor( newLatLng );
+  
+						}
+
+					};
+				} ( L.Map.Keyboard.prototype._onKeyDown );
+*/
 
 
 			//*******************************************************
@@ -356,6 +380,9 @@
 					}
 				});
 	
+				this._showOnFirstMove();
+			
+			
 			}
 		},
 
@@ -365,12 +392,17 @@
 			//Check if map has been added to a MapSync-object
 			if (map.options && map.options.mapSync && map.mapSync == this){
 
+				var mouseIsOver = map.options.mapSync.$map_container.hasClass( 'map-sync-mouseover' );
 				//If the cursor is over the enabled map => fire a mouseout to update the other maps
-				if (map.options.mapSync.$map_container.hasClass( 'map-sync-mouseover' ) )
+				if (mouseIsOver)
 					this._onMouseOutMap( map );
-
+				
 				map.options.mapSync.$map_container.removeClass( 'map-sync-enabled' );
 				map.options.mapSync.enabled = false;
+
+				if (mouseIsOver)
+					this._onMouseOverMap( map );
+			
 			}
 		},
 
@@ -433,6 +465,17 @@
 				this._forEachMap({
 					mapFunction	: function(map){ map.options.mapSync.$map_container.removeClass( 'map-sync-passive' ); },
 					inclDisabled: true
+			});
+		},
+
+
+		//**************************************************************************
+		//_updateCursor - Update the latlng-position of all the shadow-cursors
+		_updateCursor: function( latlng ){
+			this._forEachMap({
+				mapFunction	: function( map, latlng ) { map.options.mapSync.cursorMarker.setLatLng( latlng ); },
+				arguments		: [latlng],
+				inclDisabled: true
 			});
 		},
 

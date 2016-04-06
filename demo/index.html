@@ -20,6 +20,9 @@
 			float:left;
 		}
 
+		.map-sync-mouseover {
+			border: 2px solid red !important;
+		}
 
 	</style>
 </head>
@@ -42,7 +45,7 @@
 
 		var map1 = L.map('map').setView([51.505, -0.09], 13);
 			L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-				maxZoom: 14,
+				maxZoom: 14, 
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors</a>'
       }).addTo(map1);
 
@@ -76,10 +79,16 @@
 
 		//*************************************************************		
 		var map2 = L.map('map2').setView([0, 0], 10);
-		L.tileLayer(
-			'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', 
-			{ maxZoom: 14, attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'}
-		).addTo(map2);
+		
+//		L.tileLayer(
+//			'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', 
+//			{ maxZoom: 14, attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'}
+//		).addTo(map2);
+			L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				maxZoom: 14, 
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors</a>'
+      }).addTo(map2);
+
 		function openPopup2( e ) {
 			var popup = L.popup();
 			popup
@@ -95,10 +104,15 @@
 
 		//*************************************************************		
 		var map3 = L.map('map3').setView([20, 20], 13);
-		L.tileLayer(
-			'http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', 
-			{	maxZoom: 14, attribution: 'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'}
-		).addTo(map3);
+
+//		L.tileLayer(
+//			'http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', 
+//			{	maxZoom: 14, attribution: 'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'}
+//		).addTo(map3);
+			L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				maxZoom: 14, 
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors</a>'
+      }).addTo(map3);
 
 		function openPopup3( e ) {
 			var popup = L.popup();
@@ -121,6 +135,7 @@
 //map1.on('zoomstart viewreset moveend	dragend zoomend resize autopanstart', function( event ){
 //	console.log(event.type);
 //});
+
 
 	</script>
 </body>
