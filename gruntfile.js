@@ -109,8 +109,8 @@ module.exports = function(grunt) {
 	for (var packageName in overrides)
 		if ( overrides.hasOwnProperty(packageName) ){
 			var p_overrides = overrides[packageName];
-			if (p_overrides.dependencies)
-			  bower_concat_options.dependencies[packageName] = p_overrides.dependencies;
+			//Removed if (p_overrides.dependencies)
+			//Removed   bower_concat_options.dependencies[packageName] = p_overrides.dependencies;
 			if (p_overrides.main)
 			  bower_concat_options.mainFiles[packageName] = p_overrides.main;
 		}

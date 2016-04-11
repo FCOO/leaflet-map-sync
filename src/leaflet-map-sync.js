@@ -211,20 +211,8 @@
 
 			map.on('zoomend dragend', function( /*event*/ ){
 				//call setView for all maps (except the target)
-				if (this.options.mapSync.enabled){
+				if (this.options.mapSync.enabled)
 					this.mapSync._updateMap( map );
-/*
-				this.mapSync._forEachMap({
-						mapFunction	: function( map, activeMap, activeCenter, activeZoom ) { 
-							if ((!map.getCenter().equals( activeCenter )) || (map.getZoom() != activeZoom)){
-								map.setView(activeCenter, activeZoom, NO_ANIMATION ); 
-							}
-						},
-						arguments		: [this, map.getCenter(), map.getZoom()],
-						excludeMap	: this
-				});
-*/
-				}
 			});
 
 
@@ -431,8 +419,7 @@
 
 
 		//**************************************************************************
-		//_forEachMap
-		//options = {mapFunction=function(map, arg), arguments: [], excludeMap: leaflet-map, inclDisabled: boolean }
+		//_forEachMap( {mapFunction: function(map, arg), arguments: [], excludeMap: leaflet-map, inclDisabled: boolean } )
 		_forEachMap: function( options ){
 			var i, nextMap, nextArg;
 			for (i=0; i<this.list.length; i++ ){
