@@ -1,14 +1,14 @@
 {
   "name": "leaflet-map-sync",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "homepage": "https://github.com/FCOO/leaflet-map-sync",
   "authors": [
-    "NielsHolt"
+    "Niels Holt"
   ],
   "description": "",
   "main": [
-    "dist/leaflet-map-sync.min.js",
-    "dist/leaflet-map-sync.min.css"
+    "dist/leaflet-map-sync.js",
+    "dist/leaflet-map-sync.css"
   ],
   "repository": {
     "type": "git",
@@ -16,7 +16,8 @@
   },
   "dependencies": {
     "jquery": "latest",
-    "leaflet": "latest"
+    "leaflet": "latest",
+    "modernizr-javascript": "FCOO/modernizr-javascript#latest"
   },
   "devDependencies": {
     "bourbon": "latest",

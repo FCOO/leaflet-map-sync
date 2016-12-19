@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html style="height:100%; width:100%; margin:0; padding:0">
 <head>
 	<title>fcoo.dk - leaflet-map-sync - Demo</title>
 	<meta charset="utf-8" />
@@ -13,116 +13,118 @@
   <link  href="../src/leaflet-map-sync.css" rel="stylesheet">	
 	<style>
 		.map-container {
-			width: 300px; 
-			height: 400px;
-			border: 2px solid black;
+			width: 25%; 
+			height: 300px;
 			margin: 4px;
 			float:left;
 		}
-
-		.map-sync-mouseover {
-			border: 2px solid red !important;
-		}
+        .zoom-container {
+            border: 1px solid black;
+            width: 100px;
+            height: 30px;
+            display: inline-block;
+            text-align: center;
+        }
 
 	</style>
 </head>
 
-<body>
-	<div id="map" class="map-container"></div>
-	<div id="map2" class="map-container"></div>
+<body style="height:100%; width:100%; margin:0; padding:0">
+    <h2>Center map is master-map</h2>
+    <h3>Left map: zoom +2. Right map: zoom -2. Bottom maps: zoom +1</h3>
+    <div id="map2" class="map-container"></div>
+	<div id="map" style="height: 400px; width:400px" class="map-container"></div>
 	<div id="map3" class="map-container"></div>
+	<div id="map4" style="height: 100px; width:60%" class="map-container"></div>
+	<div id="map5" style="height: 100px; width:60%" class="map-container"></div>
+	<div id="map6" style="height: 100px; width:60%" class="map-container"></div>
 	<div style="float:left;width:100%">
-		<button id="enableMap1">Enable #1</button>
-		<button id="disableMap1">Disable #1</button>
+		<button id="enableMap3">Enable right map</button>
+		<button id="disableMap3">Disable right map</button>
+		<button id="enableZoomMap3">Enable right map zoom sync</button>
+		<button id="disableZoomMap3">Disable right map zoom sync</button>
+		<button id="zoomOffsetPlus2Map3">Set right map zoom offset = +2</button>
+		<button id="zoomOffsetMinus2Map3">Set right map zoom offset = -2</button>
+
 	</div>
 
-	<script src="bower_components.js"></script>
+    
+    <script src="bower_components.js"></script>
 	<script src="../src/leaflet-map-sync.js"></script>
 
 	<script>
-		L.Icon.Default.imagePath = '\images';
-		var mapSync = new L.MapSync({ shadowCursor:'cursor' });
+        L.Icon.Default.imagePath = '\images';
 
-		var map1 = L.map('map').setView([51.505, -0.09], 13);
-			L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-				maxZoom: 14, 
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors</a>'
-      }).addTo(map1);
+		var mapSync     = new L.MapSync();
+        var map1zoom    = 7,
+            map1minzoom = 4,
+            map1maxzoom = 12,
 
-		$('#enableMap1').click( function(){ mapSync.enable( map1 ); });
-		$('#disableMap1').click( function(){ mapSync.disable( map1 ); });
+            globalTileSize = 256,
 
-		L.circle([51.508, -0.11], 500, {
-			color: 'red',
-			fillColor: '#f03',
-			fillOpacity: 0.5
-		}).addTo(map1).bindPopup("I am a circle.");
-
-		L.polygon([
-			[51.509, -0.08],
-			[51.503, -0.06],
-			[51.51, -0.047]
-		]).addTo(map1).bindPopup("I am a polygon.");
-
-
-		function openPopup1( e ) {
-			var popup = L.popup();
-			popup
-				.setLatLng(e.latlng)
-				.setContent("You clicked the map at <br>" + e.latlng.toString()+'<br><button id="enableMap1_1">Enable #1</button><button id="disableMap1_1">Disable #1</button>')
-				.openOn(map1);
-			$('#enableMap1_1').click( function(){ mapSync.enable( map1 ); });
-			$('#disableMap1_1').click( function(){ mapSync.disable( map1 ); });
-
-		}
-		map1.on('click', openPopup1 );
+            globalLayerUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'; 
+            //globalLayerUrl = 'http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png'; 
+            //globalLayerUrl = 'https://tiles04.fcoo.dk/tiles/tiles_bckgrnd_512_mercator_201508030000/{z}/{x}/{y}.png'; globalTileSize = 512;
+            
 
 		//*************************************************************		
-		var map2 = L.map('map2').setView([0, 0], 10);
-		
-		L.tileLayer(
-			'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', 
-			{ maxZoom: 14, attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'}
-		).addTo(map2);
+        var map1 = mapSync.add(L.map('map', {attributionControl: false, minZoom: map1minzoom, maxZoom:map1maxzoom} ).setView([51.505, -0.09], map1zoom));
 
-		function openPopup2( e ) {
-			var popup = L.popup();
-			popup
-				.setLatLng(e.latlng)
-				.setContent("You clicked the map at <br>" + e.latlng.toString()+'<br><button id="enableMap1_2">Enable #1</button><button id="disableMap1_2">Disable #1</button>')
-				.openOn(map2);
-			$('#enableMap1_2').click( function(){ mapSync.enable( map1 ); });
-			$('#disableMap1_2').click( function(){ mapSync.disable( map1 ); });
+        //*************************************************************		
+		mapSync.add(L.map('map2', {attributionControl: false}), {zoomOffset: +2 });
+
+        //*************************************************************		
+		var map3 = mapSync.add(L.map('map3', {attributionControl: false}), {zoomOffset: -2});
+        $('#enableMap3').click( function(){ mapSync.enable( map3 ); });
+		$('#disableMap3').click( function(){ mapSync.disable( map3 ); });
+
+        $('#enableZoomMap3').click( function(){ mapSync.enableZoom( map3 ); });
+        $('#disableZoomMap3').click( function(){ mapSync.disableZoom( map3 ); });
+
+        $('#zoomOffsetPlus2Map3').click( function(){ mapSync.setZoomOffset( map3, +2 ); });
+        $('#zoomOffsetMinus2Map3').click( function(){ mapSync.setZoomOffset( map3, -2 ); });
+
+
+        //*************************************************************		
+		mapSync.add(L.map('map4', {attributionControl: false}), {zoomOffset: 1 });
+		mapSync.add(L.map('map5', {attributionControl: false}), {zoomOffset: 1 });
+		mapSync.add(L.map('map6', {attributionControl: false}), {zoomOffset: 1 });
+
+
+        //*************************************************************		
+        mapSync.forEachMap( function( index, map ){
+            L.tileLayer(globalLayerUrl, {tileSize: globalTileSize} ).addTo(map);
+
+            L.circle([51.505, -0.09], 50000, {
+			    color: 'red',
+			    fillColor: '#f03',
+			    fillOpacity: 0.5
+		    }).addTo(map).bindPopup("I am a circle.");
+
+            L.polygon([
+			    [51.505, -0.09],
+			    [51.505, 2.06],
+			    [52.51,  -0.09]
+		    ], {color: 'green'}).addTo(map).bindPopup("I am polygon at map "+index);
+
+        
+            var crossMarker = $('<div class="cross-marker"><div><div/></div><div><div/></div></div>'); 
+            $( map.getContainer() ).append( crossMarker ); 
+/*
+		    function openPopup( e ) {
+			    var popup = L.popup();
+			    popup
+				    .setLatLng(e.latlng)
+				    .setContent('You clicked the map at <br>' + e.latlng.toString()+'<br><button id="enableMap'+index+'">Enable #'+index+'</button><button id="disableMap'+index+'">Disable #'+index+'</button>')
+				    .openOn(map);
+			$('#enableMap'+index).click( function(){ mapSync.enable( map ); });
+			$('#disableMap'+index).click( function(){ mapSync.disable( map ); });
 
 		}
-		map2.on('click', openPopup2 );
+		map.on('click', openPopup );
+*/
 
-
-		//*************************************************************		
-		var map3 = L.map('map3').setView([20, 20], 13);
-
-		L.tileLayer(
-			'http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', 
-			{	maxZoom: 14, attribution: 'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'}
-		).addTo(map3);
-
-		function openPopup3( e ) {
-			var popup = L.popup();
-			popup
-				.setLatLng(e.latlng)
-				.setContent("You clicked the map at <br>" + e.latlng.toString()+'<br><button id="enableMap1_3">Enable #1</button><button id="disableMap1_3">Disable #1</button>')
-				.openOn(map3);
-			$('#enableMap1_3').click( function(){ mapSync.enable( map1 ); });
-			$('#disableMap1_3').click( function(){ mapSync.disable( map1 ); });
-
-		}
-		map3.on('click', openPopup3 );
-
-		//*************************************************************		
-		mapSync.add(map1);
-		mapSync.add(map2);
-		mapSync.add(map3);
-
+        });
 	</script>
 </body>
 </html>
