@@ -22,55 +22,52 @@
 
   /************************************************************************
   All icon-classes and cooresponding css cursor-styles. * = Not supported
-  icon-class   css-class
-  ----------   ---------
-  cursor       auto
-  pointer      pointer
-  cursor       default
-  none         none
-  *            context-menu
-  *            help
-  wait         progress, wait
-  cell         cell
-  crosshair    crosshair
-  *            text
-  *            vertical-text
-  *            alias
-  *            copy
-  move         move, all-scroll
-  not-allowed  no-drop, not-allowed
-  initial
-  inherit
-  ns-resize    ns-resize, n-resize, s-resize
-  ew-resize    ew-resize, e-resize, w-resize
-  ne-resize    ne-resize, sw-resize, nesw-resize
-  nw-resize    nw-resize, se-resize, nwse-resize
-  *            col-resize
-  *            row-resize
-  zoom-in      zoom-in
-  zoom-out     zoom-out
-  grab         grab, -webkit-grab
-  grabbing     grabbing, -webkit-grabbing
+  icon-class    css-class
+  ----------    ---------
+  cursor        auto, default, initial, inherit, context-menu, help, progress, alias, copy
+  pointer       pointer
+  none          none
+  wait          progress, wait
+  cell          cell
+  crosshair     crosshair
+  text          text
+  vertical-text vertical-text
+  move          move, all-scroll
+  not-allowed   no-drop, not-allowed
+  ns-resize     ns-resize, n-resize, s-resize
+  ew-resize     ew-resize, e-resize, w-resize
+  ne-resize     ne-resize, sw-resize, nesw-resize
+  nw-resize     nw-resize, se-resize, nwse-resize
+  col-resize    col-resize
+  row-resize    row-resize
+  zoom-in       zoom-in
+  zoom-out      zoom-out
+  grab          grab, -webkit-grab
+  grabbing      grabbing, -webkit-grabbing
   ************************************************************************/
-
     var iconSize = [22, 26],
         iconList = {
-            'cursor'     : { iconMargin: [ -1,  0], cssClasses: ['auto', 'default', 'initial', 'inherit'] },
-            'pointer'    : { iconMargin: [ -7, -2], cssClasses: ['pointer'] },
-            'none'       : { iconMargin: [  0,  0], cssClasses: ['none'] },
-            'wait'       : { iconMargin: [-11,-10], cssClasses: ['progress', 'wait'] },
-            'cell'       : { iconMargin: [-11,-11], cssClasses: ['cell'] },
-            'crosshair'  : { iconMargin: [-11,-10], cssClasses: ['crosshair'] },
-            'move'       : { iconMargin: [-11, -9], cssClasses: ['move', 'all-scroll'] },
-            'not-allowed': { iconMargin: [-11,-11], cssClasses: ['no-drop', 'not-allowed'] },
-            'ns-resize'  : { iconMargin: [-11, -9], cssClasses: ['ns-resize', 'n-resize', 's-resize'] },
-            'ew-resize'  : { iconMargin: [-11, -9], cssClasses: ['ew-resize', 'e-resize', 'w-resize'] },
-            'ne-resize'  : { iconMargin: [-11,-10], cssClasses: ['ne-resize', 'sw-resize', 'nesw-resize'] },
-            'nw-resize'  : { iconMargin: [-11,-10], cssClasses: ['nw-resize', 'se-resize', 'nwse-resize'] },
-            'zoom-in'    : { iconMargin: [-10, -9], cssClasses: ['zoom-in'] },
-            'zoom-out'   : { iconMargin: [-10, -9], cssClasses: ['zoom-out'] },
-            'grab'       : { iconMargin: [ -8, -8], cssClasses: ['grab', '-webkit-grab', '-moz-grab'] },
-            'grabbing'   : { iconMargin: [ -8, -8], cssClasses: ['grabbing', '-webkit-grabbing', '-moz-grabbing'] },
+            'cursor'       : { iconMargin: [ -1,  0], cssClasses: ['auto', 'default', 'initial', 'inherit', 'context-menu', 'help', 'progress', 'alias', 'copy'] },
+            'pointer'      : { iconMargin: [ -7, -2], cssClasses: ['pointer'] },
+            'none'         : { iconMargin: [  0,  0], cssClasses: ['none'] },
+            'wait'         : { iconMargin: [-11,-10], cssClasses: ['progress', 'wait'] },
+            'cell'         : { iconMargin: [-11,-11], cssClasses: ['cell'] },
+            'crosshair'    : { iconMargin: [-11,-10], cssClasses: ['crosshair'] },
+            'move'         : { iconMargin: [-11, -9], cssClasses: ['move', 'all-scroll'] },
+            'not-allowed'  : { iconMargin: [-11,-11], cssClasses: ['no-drop', 'not-allowed'] },
+            'ns-resize'    : { iconMargin: [-11, -9], cssClasses: ['ns-resize', 'n-resize', 's-resize'] },
+            'ew-resize'    : { iconMargin: [-11, -9], cssClasses: ['ew-resize', 'e-resize', 'w-resize'] },
+            'ne-resize'    : { iconMargin: [-11,-10], cssClasses: ['ne-resize', 'sw-resize', 'nesw-resize'] },
+            'nw-resize'    : { iconMargin: [-11,-10], cssClasses: ['nw-resize', 'se-resize', 'nwse-resize'] },
+            'zoom-in'      : { iconMargin: [-10, -9], cssClasses: ['zoom-in'] },
+            'zoom-out'     : { iconMargin: [-10, -9], cssClasses: ['zoom-out'] },
+            'grab'         : { iconMargin: [ -8, -8], cssClasses: ['grab', '-webkit-grab', '-moz-grab'] },
+            'grabbing'     : { iconMargin: [ -8, -8], cssClasses: ['grabbing', '-webkit-grabbing', '-moz-grabbing'] },
+            'col-resize'   : { iconMargin: [-11, -8], cssClasses: ['col-resize'] },
+            'row-resize'   : { iconMargin: [ -8,-11], cssClasses: ['row-resize'] },
+            'text'         : { iconMargin: [ -2, -8], cssClasses: ['text'] },
+            'vertical-text': { iconMargin: [ -8, -3], cssClasses: ['vertical-text'] },
+
     };
 
     //Create a fast look-up object
@@ -82,17 +79,29 @@
             cssCursorToIconName[ cssClasses[i] ] = iconName;
     }
 
-    var NO_ANIMATION =  {
-            animate: false,
-            reset  : true
-        };
+    var ANIMATION          =  { animate: true               },
+        NO_ANIMATION       =  { animate: false              },
+        NO_ANIMATION_RESET =  { animate: false, reset: true },
+
+        panZoomOptionsZoomEnd = ANIMATION,      /* 1 */
+        panZoomOptionsOther   = NO_ANIMATION,   /* 2 */
+        panZoomOptionsDragEnd = NO_ANIMATION;   /* 3 */
+/*
+TESTS AF FORSKELLIGE MODES
+                                                        Desktop                             Touch
+1           2               3                       pan         zoom                    pan         zoom
+ANIMATION   NO_ANIMATION    NO_ANIMATION            Ok          NO                      ukendt      ukendt
+ANIMATION   NO_ANIMATION    NO_ANIMATION_RESET      NO          NO                      ukendt      ukendt
+
+
+*/
 
     /***********************************************************
     ************************************************************
     Extentions for L.Map
 
     New events
-        Event-name               Fired in 
+        Event-name               Fired in
         ------------------------ ----------------------------------------
         mapsyncenabled           MapSync.enable( map )
         mapsyncdisabled          MapSync.disable( map )
@@ -102,13 +111,24 @@
 
     ************************************************************
     ***********************************************************/
+
+
+    /********************************************************************
+    *********************************************************************
+    1: SYNCHRONIZING THE MAPS CENTER AND ZOOM
+    *********************************************************************
+    ********************************************************************/
+
+    /********************************************************************
+    1: Map.include
+    ********************************************************************/
     L.Map.include({
 
         /***********************************
         setMinZoom, setMaxZoom (1)
         ***********************************/
         setMinZoom: function( setMinZoom ){
-            return function( zoom, usePrototype ){ 
+            return function( zoom, usePrototype ){
                 //If in mapSync => use _mapSync_setMinMaxZoom
                 if (this._mapSync && !usePrototype)
                     return this._mapSync_setMinMaxZoom( zoom, undefined );
@@ -119,7 +139,7 @@
         } (L.Map.prototype.setMinZoom),
 
         setMaxZoom: function( setMaxZoom ){
-            return function( zoom, usePrototype  ){ 
+            return function( zoom, usePrototype  ){
                 //If in mapSync => use _mapSync_setMinMaxZoom
                 if (this._mapSync && !usePrototype)
                     return this._mapSync_setMinMaxZoom( undefined, zoom );
@@ -130,15 +150,15 @@
         } (L.Map.prototype.setMaxZoom),
 
         /***********************************
-        _mapSync_setMinMaxZoom(minZoom, maxZoom) (1)
+        _mapSync_setMinMaxZoom(minZoom, maxZoom)
         ***********************************/
         _mapSync_setMinMaxZoom: function (minZoom, maxZoom){
             if (this.options.mapSync.isMainMap){
                 //Set min- and/or max-zoom for the main-map and update all other maps
                 if (minZoom !== undefined)
-                    this.setMinZoom( minZoom, true );  
+                    this.setMinZoom( minZoom, true );
                 if (maxZoom !== undefined)
-                    this.setMaxZoom( maxZoom, true );  
+                    this.setMaxZoom( maxZoom, true );
                 this._mapSync._updateAllMinMaxZoom();
             }
             else {
@@ -153,31 +173,32 @@
                 }
             }
             return this;
-        },  
-
-        /***********************************
-        _mapSync_setMinMaxZoom() (1)
-        Adjust min- and max-zoom according to min- and max-zoom of the main map
-        ***********************************/
-        _mapSync_adjustMinMaxZoom: function(){
-            this.setMinZoom( this._mapSync.mainMap.getMinZoom()/* + this.options.mapSync.zoomOffset*/, true );
-            this.setMaxZoom( this._mapSync.mainMap.getMaxZoom()/* + this.options.mapSync.zoomOffset*/, true );
         },
 
         /***********************************
-        setView (1)
+        _mapSync_setMinMaxZoom()
+        Adjust min- and max-zoom according to min- and max-zoom of the main map
         ***********************************/
-        setView: function( setView ) { 
-            return function(center, zoom){ 
-                
-                //If in mapSync calc new zoom for mainMap
-                if (this._mapSync && this.options.mapSync.enabled){
+        _mapSync_adjustMinMaxZoom: function(){
+            this.setMinZoom( this._mapSync.mainMap.getMinZoom() + this.options.mapSync.zoomOffset, true );
+            this.setMaxZoom( this._mapSync.mainMap.getMaxZoom() + this.options.mapSync.zoomOffset, true );
+        },
 
+        /***********************************
+        setView
+        ***********************************/
+        setView: function( setView ) {
+            return function(center, zoom/*, zoomPanOptions*/){
+                var mapSync = this._mapSync;
+
+                //If in mapSync calc new zoom for mainMap
+                if (mapSync && this.options.mapSync.enabled){
                     var newMainZoom = this.options.mapSync.zoomEnabled ? zoom - this.options.mapSync.zoomOffset : null;
-                    this._mapSync._forEachMap({
-                        mapFunction: function( map, center, newMainZoom ){ 
+
+                    mapSync._forEachMap({
+                        mapFunction: function( map, center, newMainZoom ){
                             var newMapZoom = (newMainZoom !== null) && map.options.mapSync.zoomEnabled ? newMainZoom + map.options.mapSync.zoomOffset : map.getZoom();
-                            setView.call(map, center, newMapZoom, NO_ANIMATION );
+                            setView.call(map, center, newMapZoom, panZoomOptionsOther);
                         },
                         arguments  : [center, newMainZoom],
                         excludeMap : this
@@ -189,19 +210,20 @@
             };
         } (L.Map.prototype.setView),
 
+
         /***********************************
-        panTo (1)
+        panTo
         ***********************************/
         panTo: function( panTo ) {
-            return function(){ 
+            return function(){
                 //Original function/method
                 panTo.apply(this, arguments);
                  if (this._mapSync && this.options.mapSync.enabled)
                     this._mapSync._forEachMap({
-                        mapFunction: function( map, arg ){ 
-                            panTo.apply(map, arg); 
+                        mapFunction: function( map, arg ){
+                            panTo.apply(map, arg);
                         },
-                        arguments  : arguments, 
+                        arguments  : arguments,
                         excludeMap : this
                     });
 
@@ -210,9 +232,9 @@
         } (L.Map.prototype.panTo),
 
         /***********************************
-        panBy (1)
+        panBy
         ***********************************/
-        panBy: function( panBy ) { 
+        panBy: function( panBy ) {
             return function ( point ) {
 
                 //Original function/method
@@ -221,38 +243,91 @@
                 //pan the other maps if the pan is by keyboard
                 if (this._mapSync && this.options.mapSync.enabled)
                     this._mapSync._forEachMap({
-                        mapFunction: function( map, point, activeMap ){ 
+                        mapFunction: function( map, point, activeMap ){
                             point = $.isArray(point) ? L.point(point) : point;
                             var factor = Math.pow( 2, map.getZoom() - activeMap.getZoom() );
-                            panBy.call(map, point.multiplyBy( factor )); 
+                            panBy.call(map, point.multiplyBy( factor ));
                         },
                         arguments  : [point, this],
                         excludeMap : this
                 });
                 return this;
-            };                    
+            };
         } (L.Map.prototype.panBy),
 
         /***********************************
-        _onResize (1)
+        _onResize
         ***********************************/
-        _onResize: function( _onResize ){ 
-            return function (){ 
+        _onResize: function( _onResize ){
+            return function (){
                 //Original function/method
                 _onResize.apply(this, arguments);
 
                 if (this._mapSync && this.options.mapSync.enabled)
                     this._mapSync._forEachMap({
-                        mapFunction: function( map, arg ){ 
-                            _onResize.apply(map, arg); 
+                        mapFunction: function( map, arg ){
+                            _onResize.apply(map, arg);
                         },
                         arguments  : arguments,
                         excludeMap : this
                     });
                 return this;
             };
-        } (L.Map.prototype._onResize),
+        } (L.Map.prototype._onResize)
+    });
 
+
+    /********************************************************************
+    1: Events
+    ********************************************************************/
+    function map_on_zoomend_sync(){
+        this.setView( this.getCenter(), this.getZoom(), panZoomOptionsZoomEnd);
+    }
+
+    function map_on_dragend_sync(){
+        if (this.options.mapSync.enabled)
+            this.setView( this.getCenter(), this.getZoom(), panZoomOptionsDragEnd);
+    }
+
+    function addMapEvents_sync( map ){
+        map.on('zoomend',    map_on_zoomend_sync   );
+        map.on('dragend',    map_on_dragend_sync   );
+
+        //Extend this.dragging._draggable._updatePosition (1)
+        map.dragging._draggable._updatePosition = function ( _updatePosition ) {
+            return function(){
+                //Original function/method
+                _updatePosition.apply(this, arguments);
+
+                if (map.options.mapSync.enabled)
+                    map._mapSync._forEachMap({
+                        mapFunction: function( map, _currentDraggable, activeMap ){
+                            //Adjust _newPos by the different in zoom between the active (dragging) map and the map
+                            var factor = Math.pow( 2, map.getZoom() - activeMap.getZoom() );
+                            L.DomUtil.setPosition(
+                                map.dragging._draggable._element,
+                                _currentDraggable._newPos.multiplyBy( factor )
+                            );
+                            //Fire 'moveend' to force updating the map
+                            map.fire('moveend');
+                        },
+                        arguments : [this, map],
+                        excludeMap: map
+                    });
+            };
+        }( L.Draggable.prototype._updatePosition );
+    }
+
+    /********************************************************************
+    *********************************************************************
+    2: CREATING AND UPDATING THE 'SHADOW' CURSOR
+    *********************************************************************
+    ********************************************************************/
+
+    /********************************************************************
+    2: Map.include
+    ********************************************************************/
+    L.Map.include({
         /***********************************
         _mapSync_updateShadow (2)
         Draw/updates the shadowa of this in other maps and
@@ -263,7 +338,7 @@
             // The 'shadow' map of mapA is shown in mapB if
             //    - mapB cover mapA, or
             //    - mapA and mapB overlaps AND mapA.zoom > mapB.zoom
-            
+
             //************************************************************************************
             function setShadowMap( map, shadowMap, $mapShadow, role ){
                 var shadowBounds = shadowMap.getBounds(),
@@ -275,23 +350,23 @@
                     if (mapBounds.contains( shadowBounds ) )
                         showShadow = true;
                     else {
-                        //If Shadow map don't coner map and map is zoomed out compared to shadow map => show the shadow  
+                        //If Shadow map don't coner map and map is zoomed out compared to shadow map => show the shadow
                         showShadow = !shadowBounds.contains( mapBounds ) && (shadowMap.getZoom() > map.getZoom());
                     }
                     if (showShadow){
                         //Adjust shadow-div
                         var topLeft     = map.latLngToContainerPoint( shadowBounds.getNorthWest() ),
                             bottomRight = map.latLngToContainerPoint( shadowBounds.getSouthEast() );
-                        $mapShadow.css({ 
-                            top   : topLeft.y, 
-                            left  : topLeft.x, 
-                            width : bottomRight.x - topLeft.x, 
+                        $mapShadow.css({
+                            top   : topLeft.y,
+                            left  : topLeft.x,
+                            width : bottomRight.x - topLeft.x,
                             height: bottomRight.y - topLeft.y
                          });
                     }
                 }
 
-                //Set class for shadow map container to show/hide shadow and border 
+                //Set class for shadow map container to show/hide shadow and border
                 if ($mapShadow)
                     $mapShadow
                         .toggleClass('map-sync-shadow-show',   showShadow)
@@ -302,31 +377,31 @@
             }
             //************************************************************************************
 
-            var THIS = this;
+            var _this = this;
 
             //Draw 'yellow' shadow maps of this in all other maps
             $.each( this._mapSync.list, function( index, otherMap ){
-                var $mapShadow = THIS.options.mapSync.shadowList[ index ]; // = the shadow map of THIS in otherMap
-                if ( setShadowMap(  otherMap, THIS, $mapShadow ) )
-                    THIS.options.mapSync.$map_container.addClass('map-sync-active-dragging');
+                var $mapShadow = _this.options.mapSync.shadowList[ index ]; // = the shadow map of _this in otherMap
+                if ( setShadowMap(  otherMap, _this, $mapShadow ) )
+                    _this.options.mapSync.$map_container.addClass('map-sync-active-dragging');
             });
-        
+
             //Draw 'open yellow' (or 'blue' for main map) shadow maps of all other maps in this
             $.each( this._mapSync.list, function( index, otherMap ){
-                var thisIndexInList = THIS.options.mapSync.indexInList,
-                    $mapShadow = otherMap.options.mapSync.shadowList[ thisIndexInList ], // = the shadow map of otherMap in THIS
-                    otherMapIsMain = THIS._mapSync.mainMap == otherMap;
-                    
-                if ( setShadowMap(  THIS, otherMap, $mapShadow, otherMapIsMain ? 'MAIN' : 'SECOND' ) ){
+                var thisIndexInList = _this.options.mapSync.indexInList,
+                    $mapShadow = otherMap.options.mapSync.shadowList[ thisIndexInList ], // = the shadow map of otherMap in _this
+                    otherMapIsMain = _this._mapSync.mainMap == otherMap;
+
+                if ( setShadowMap(  _this, otherMap, $mapShadow, otherMapIsMain ? 'MAIN' : 'SECOND' ) ){
                     otherMap.options.mapSync.$map_container.addClass( otherMapIsMain ? 'map-sync-main-dragging' : 'map-sync-second-dragging');
 
                     //Hide the shadow map if there already is a exact copy
                     for (var i=0; i<index; i++ )
                         if (i != thisIndexInList){
-                            var $otherMapShadow = THIS._mapSync.list[i].options.mapSync.shadowList[ thisIndexInList ];
-                        
+                            var $otherMapShadow = _this._mapSync.list[i].options.mapSync.shadowList[ thisIndexInList ];
+
                             //If the two shadows $mapShadow and $otherMapShadow are equal => hide $mapShadow
-                            if ( 
+                            if (
                                 ( $mapShadow.css("left") == $otherMapShadow.css("left") ) &&
                                 ( $mapShadow.css("top") == $otherMapShadow.css("top") ) &&
                                 ( $mapShadow.css("width") == $otherMapShadow.css("width") ) &&
@@ -341,31 +416,156 @@
             });
 
         }, //end of _mapSync_updateShadow
-        
+
         /***********************************
         _mapSync_hideShadowMaps (2)
         Hide all shadow maps in other maps and reset own border etc.
         ***********************************/
         _mapSync_hideShadowMaps: function(){
             for (var i=0; i<this._mapSync.list.length; i++ ){
-                var $mapShadow = this.options.mapSync.shadowList[i]; // = the shadow map of THIS in otherMap
+                var $mapShadow = this.options.mapSync.shadowList[i]; // = the shadow map of _this in otherMap
                 if ($mapShadow)
                   $mapShadow.removeClass('map-sync-shadow-show map-sync-shadow-main map-sync-shadow-second');
             }
-            this.options.mapSync.$map_container.removeClass('map-sync-main-dragging map-sync-active-dragging map-sync-second-dragging' ); 
+            this.options.mapSync.$map_container.removeClass('map-sync-main-dragging map-sync-active-dragging map-sync-second-dragging' );
         }
-           
+
     }); //End of  L.Map.include({...
 
-    
-    /***********************************************************
-    ************************************************************
+    /********************************************************************
+    2: Events
+    function map_on_XX_cursor(){
+    ********************************************************************/
+    function map_whenReady_cursor(){
+        //Create a marker to be used as 'shadow' cursor and move it to a popupPane to make the cursor apear over the popups
+        var divIcon = L.divIcon({ className: 'map-sync-cursor-icon', iconSize: iconSize });
+        this.options.mapSync.cursorMarker = L.marker( this.getCenter(), {icon: divIcon} ).addTo(this);
+
+        //Create a new pane above everything and move the shadow-cursor from markerPane to this pane
+        var cursorContainer = L.DomUtil.create( 'div', 'map-sync-cursor-container', this._mapPane );
+        this._panes.markerPane.removeChild( this.options.mapSync.cursorMarker._icon );
+        cursorContainer.appendChild( this.options.mapSync.cursorMarker._icon );
+    }
+
+    function map_on_mouseover_cursor(){
+        if (this._mapSync)
+            this._mapSync._onMouseOverMap( this );
+    }
+    function map_on_mouseout_cursor(){
+        if (this._mapSync)
+            this._mapSync._onMouseOutMap ( this );
+    }
+
+    function map_on_mousemove_cursor( mouseEvent ){
+        //Update the position of the shadow-cursor
+        if (this._mapSync && this.options.mapSync.enabled)
+            this._mapSync._updateCursor( mouseEvent.latlng );
+    }
+
+    // Since no mousemove-event is fired when the map is panned or zoomed using the keyboard,
+    // the following workaround is implemented:
+    // The shadow-cursor is hidden when zoom or move startes.
+    // When zoom or move endes the shadow-cursor is shown again the first time the mouse is moved
+    function map_on_xxstart_cursor(){
+        if (this._mapSync && this.options.mapSync.enabled)
+            this._mapSync.hide();
+    }
+    function map_on_xxend_cursor(){
+        if (this._mapSync && this.options.mapSync.enabled)
+            this._mapSync._showOnFirstMove();
+    }
+
+
+    function map_setCursorFromMouseEvent( mouseEvent ){
+        if (this._mapSync && this.options.mapSync.enabled)
+            this._mapSync._setCursorFromMouseEvent( mouseEvent );
+    }
+    function map_setCursorFromMapContainer(){
+        if (this._mapSync && this.options.mapSync.enabled)
+            this._mapSync._setCursorFromElement( this._container );
+    }
+
+    function addMapEvents_cursor(map){
+        map.whenReady( map_whenReady_cursor, map);
+
+        //Events to hide or show the cursor
+        map.on('mouseover', map_on_mouseover_cursor);
+        map.on('mouseout',  map_on_mouseout_cursor);
+
+        //Events to update/change the position of the cursor
+        map.on('mousemove', map_on_mousemove_cursor);
+
+        map.on('zoomstart dragstart movestart', map_on_xxstart_cursor);
+        map.on('zoomend dragend moveend',       map_on_xxend_cursor  );
+
+        /*
+        Events to update/change the cursor-type
+        Adds mouseover-event to the maps container and different panes to trace current cursor
+TODO: SKAL RETTES TIL document.onmove og html-class a la "cursor-hand"
+        */
+        L.DomEvent.on( map._controlContainer, 'mouseover', map_setCursorFromMouseEvent, map );
+        L.DomEvent.on( map._container,        'mouseover', map_setCursorFromMouseEvent, map );
+        for (var pane in map._panes)
+            L.DomEvent.on( map._panes[pane],  'mouseover', map_setCursorFromMouseEvent, map );
+
+        //Change and reset cursor on dragging
+        map.on('dragstart', function() {
+            map.once('mousemove', map_setCursorFromMapContainer, map );
+        });
+        map.on('dragend zoomend moveend boxzoomend', map_setCursorFromMapContainer, map );
+
+        $('.cursor-div').on('mouseover', $.proxy(map_setCursorFromMouseEvent, map ));
+    }
+
+
+    /********************************************************************
+    *********************************************************************
+    3: CREATING AND UPDATING THE 'SHADOW' MAP
+    *********************************************************************
+    ********************************************************************/
+    //Show 'shadow' map
+    function map_on_dragstart_shadow(){
+        if (this._mapSync && this.options.mapSync.enabled){
+            this._mapSync._updateShadowMaps( this );
+            this.options.mapSync.dragging = true;
+        }
+    }
+
+    //Hide 'shadow' map
+    function map_on_dragend_shadow(){
+        if (this._mapSync && this.options.mapSync.enabled){
+            this._mapSync._updateShadowMaps( this );
+            this._mapSync._hideShadowMaps();
+            this.options.mapSync.dragging = false;
+        }
+    }
+
+    //Redraw shadows for all no-zoom-sync maps when zoom ends
+    function map_on_zoomend_shadow(){
+        var _this = this;
+        if (this._mapSync && this.options.mapSync.dragging)
+            $.each( this._mapSync.list, function( index, otherMap ){
+                if (otherMap.options.mapSync.enabled && !otherMap.options.mapSync.zoomEnabled){
+                    _this._mapSync._updateShadowMaps( _this );
+                    return false;
+                }
+            });
+    }
+
+    function addMapEvents_shadow(map){
+        map.on('dragstart', map_on_dragstart_shadow);
+        map.on('dragend',   map_on_dragend_shadow  );
+        map.on('zoomend',   map_on_zoomend_shadow  );
+    }
+
+    /********************************************************************
+    *********************************************************************
     L.MapSync
-    ************************************************************
-    ***********************************************************/
+    *********************************************************************
+    ********************************************************************/
     L.MapSync = L.Class.extend({
         options: {
-            VERSION : "1.0.0",
+            VERSION : "1.0.1",
             iconName: 'hand'
         },
 
@@ -407,121 +607,25 @@
             else
                 //Set no-main on-loaded maps to match the main map
                 if (!map._loaded)
-                    map.setView(this.mainMap.getCenter(), this.mainMap.getZoom() +  options.zoomOffset, NO_ANIMATION );
+                    map.setView(this.mainMap.getCenter(), this.mainMap.getZoom() +  options.zoomOffset, NO_ANIMATION_RESET );
 
             /*********************************************************************************************
-            Extend methods to make them update all maps (1)
+            1: Events for sync
             *********************************************************************************************/
-            map.on('zoomend', function(){
-                this.setView( this.getCenter(), this.getZoom());
-            });
-            
-            map.on('dragend', function(){
-                if (this.options.mapSync.enabled)
-                    this.setView( this.getCenter(), this.getZoom(), NO_ANIMATION);
-            });
+            addMapEvents_sync( map );
 
-            //Extend this.dragging._draggable._updatePosition (1)
-            map.dragging._draggable._updatePosition = function ( _updatePosition ) {
-                return function(){ 
-                    //Original function/method
-                    _updatePosition.apply(this, arguments);
-
-                    if (map.options.mapSync.enabled)
-                        map._mapSync._forEachMap({
-                            mapFunction: function( map, _currentDraggable, activeMap ){
-                                //Adjust _newPos by the different in zoom between the active (dragging) map and the map
-                                var factor = Math.pow( 2, map.getZoom() - activeMap.getZoom() );
-                                L.DomUtil.setPosition(
-                                    map.dragging._draggable._element, 
-                                    _currentDraggable._newPos.multiplyBy( factor ) 
-                                );
-                                //Fire 'moveend' to force updating the map
-                                map.fire('moveend');
-                            },
-                            arguments : [this, map],
-                            excludeMap: map
-                        });
-                };
-            }( L.Draggable.prototype._updatePosition );
-
-            
             /*********************************************************************************************
-            Create and add events and overwrite methods to show, hide, and update 'shadow' cursors (2)
+            2: Events for "shadow" cursor
             *********************************************************************************************/
-            //Create a marker to be used as 'shadow' cursor and move it to a popupPane to make the cursor apear over the popups
-            var divIcon = L.divIcon({ className: 'map-sync-cursor-icon', iconSize: iconSize });
-            map.options.mapSync.cursorMarker = L.marker( map.getCenter(), {icon: divIcon} ).addTo(map);
+            addMapEvents_cursor( map );
 
-            //Create a new pane above everything and move the shadow-cursor from markerPane to this pane
-            var cursorContainer = L.DomUtil.create( 'div', 'map-sync-cursor-container', map._mapPane );
-            map._panes.markerPane.removeChild( map.options.mapSync.cursorMarker._icon );
-            cursorContainer.appendChild( map.options.mapSync.cursorMarker._icon );
-
-            //Events to hide or show the cursor
-            map.on('mouseover', function(){ 
-                if (this._mapSync)
-                    this._mapSync._onMouseOverMap( this ); 
-            });
-            map.on('mouseout', function(){ 
-                if (this._mapSync)
-                    this._mapSync._onMouseOutMap ( this ); 
-            });
-            
-            //Events to update/change the position of the cursor
-            map.on('mousemove', function( mouseEvent ){
-                //Update the position of the shadow-cursor
-                if (this._mapSync && this.options.mapSync.enabled)
-                    this._mapSync._updateCursor( mouseEvent.latlng );
-            });
-
-
-            // Since no mousemove-event is fired when the map is panned or zoomed using the keyboard,
-            // the following workaround is implemented:
-            // The shadow-cursor is hidden when zoom or move startes.
-            // When zoom or move endes the shadow-cursor is shown again the first time the mouse is moved
-            map.on('zoomstart dragstart movestart', function(){
-                if (this._mapSync && this.options.mapSync.enabled){
-                    this._mapSync.hide();
-                }
-            });
-            map.on('zoomend dragend moveend', function(){
-                if (this._mapSync && this.options.mapSync.enabled){
-                    this._mapSync._showOnFirstMove();
-                }
-            });
-
-            //Events to update/change the cursor-type
-            //Adds mouseover-event to the maps container and different panes to trace current cursor
-            function map_setCursorFromMouseEvent( mouseEvent ){ 
-                if (this._mapSync && this.options.mapSync.enabled)
-                    this._mapSync._setCursorFromMouseEvent( mouseEvent );
-            }
-            L.DomEvent.on( map._controlContainer, 'mouseover', map_setCursorFromMouseEvent, map );
-            L.DomEvent.on( map._container,        'mouseover', map_setCursorFromMouseEvent, map );
-            for (var pane in map._panes)
-                L.DomEvent.on( map._panes[pane],  'mouseover', map_setCursorFromMouseEvent, map );
-
-
-            function map_setCursorFromMapContainer(){
-                if (this._mapSync && this.options.mapSync.enabled)
-                    this._mapSync._setCursorFromElement( this._container );
-            }
-
-            //Change and reset cursor on dragging
-            map.on('dragstart', function() {
-                map.once('mousemove', map_setCursorFromMapContainer );
-            });
-            map.on('dragend zoomend moveend boxzoomend', map_setCursorFromMapContainer );
-            
-            
             /*********************************************************************************************
-            Create and add events and overwrite methods to show, hide, and update 
-            'shadow' map showing either the active map in other maps or the main map in the active map (3)
+            3: Create and add events and overwrite methods to show, hide, and update
+               'shadow' map showing either the active map in other maps or the main map in the active map
             *********************************************************************************************/
             //Create the 'shadow' map showing either the active map in other maps or the main map in the active map
-            map.options.mapSync.$mapShadow = $('<div class="map-sync-shadow"><div/></div>'); 
-            map.options.mapSync.$map_container.append( map.options.mapSync.$mapShadow ); 
+            map.options.mapSync.$mapShadow = $('<div class="map-sync-shadow"><div/></div>');
+            map.options.mapSync.$map_container.append( map.options.mapSync.$mapShadow );
 
 
             //Create a shadow in all other maps and create a shadow inside the map for all other maps
@@ -529,46 +633,19 @@
             map.options.mapSync.indexInList = this.list.length;
             $.each( this.list, function( index, otherMap ){
                 //Create shadow of map in the other map
-                var $mapShadow = $('<div class="map-sync-shadow"><div/></div>'); 
-                otherMap.options.mapSync.$map_container.append( $mapShadow ); 
+                var $mapShadow = $('<div class="map-sync-shadow"><div/></div>');
+                otherMap.options.mapSync.$map_container.append( $mapShadow );
                 map.options.mapSync.shadowList[ index ] = $mapShadow;
 
                 //Craete shadow of the other map in map
-                $mapShadow = $('<div class="map-sync-shadow"><div/></div>'); 
-                map.options.mapSync.$map_container.append( $mapShadow ); 
+                $mapShadow = $('<div class="map-sync-shadow"><div/></div>');
+                map.options.mapSync.$map_container.append( $mapShadow );
                 otherMap.options.mapSync.shadowList[ map.options.mapSync.indexInList ] = $mapShadow;
 
             });
+            addMapEvents_shadow(map);
 
 
-            //Show 'shadow' map
-            map.on('dragstart', function(){
-                if (this._mapSync && this.options.mapSync.enabled){
-                    this._mapSync._updateShadowMaps( this );
-                    this.options.mapSync.dragging = true;
-                }
-            });
-
-            //Hide 'shadow' map
-            map.on('dragend', function(){
-                if (this._mapSync && this.options.mapSync.enabled){
-                    this._mapSync._hideShadowMaps();
-                    this.options.mapSync.dragging = false;
-                }
-            });
-
-            //Redraw shadows for all no-zoom-sync maps when zoom ends
-            map.on('zoomend', function(){
-                var THIS = this;
-                if (this._mapSync && this.options.mapSync.dragging)
-                    $.each( this._mapSync.list, function( index, otherMap ){
-                        if (otherMap.options.mapSync.enabled && !otherMap.options.mapSync.zoomEnabled){
-                            THIS._mapSync._updateShadowMaps( THIS );
-                            return false;
-                        }
-                    });
-            });
-            
             //Add to list
             this.list.push(map);
 
@@ -583,13 +660,13 @@
         //**************************************************************************
         //show();
         show: function(){
-            window.modernizrOn( 'map-sync' ); 
+            window.modernizrOn('map-sync');
         },
 
         //**************************************************************************
         //hide();
         hide: function(){
-            window.modernizrOff( 'map-sync' );
+            window.modernizrOff('map-sync');
         },
 
         //**************************************************************************
@@ -604,14 +681,14 @@
                 map.options.mapSync.maxZoomOriginal = map.getMaxZoom();
 
                 //Set the maps min- and max-zoom
-                map.setView(this.mainMap.getCenter(), this.mainMap.getZoom() + map.options.mapSync.zoomOffset, NO_ANIMATION );
+                map.setView(this.mainMap.getCenter(), this.mainMap.getZoom() + map.options.mapSync.zoomOffset, NO_ANIMATION_RESET );
                 map._mapSync_adjustMinMaxZoom();
 
                 map.options.mapSync.$map_container.addClass( 'map-sync-enabled' );
                 map.options.mapSync.enabled = true;
                 //If the cursor is over an enabled map => fire a mouseover to update the other maps
                 this._forEachMap({
-                    mapFunction: function( map ) { 
+                    mapFunction: function( map ) {
                         if (map.options.mapSync.$map_container.hasClass( 'map-sync-mouseover' ) )
                             map._mapSync._onMouseOverMap( map );
                     }
@@ -639,7 +716,7 @@
                 //If the cursor is over the enabled map => fire a mouseout to update the other maps
                 if (mouseIsOver)
                     this._onMouseOutMap( map );
-                
+
                 map.options.mapSync.$map_container.removeClass( 'map-sync-enabled' );
                 map.options.mapSync.enabled = false;
 
@@ -657,11 +734,11 @@
                 map.options.mapSync.zoomEnabled = true;
                 if (map.options.mapSync.enabled)
                     //Adjust zoom (center is already in sync)
-                    map.setView(map.getCenter(), this.mainMap.getZoom() + map.options.mapSync.zoomOffset, NO_ANIMATION );
+                    map.setView(map.getCenter(), this.mainMap.getZoom() + map.options.mapSync.zoomOffset, NO_ANIMATION_RESET );
 
-                map.fire("mapsynczoomenabled");                    
-            } 
-        }, 
+                map.fire("mapsynczoomenabled");
+            }
+        },
 
         //**************************************************************************
         //disableZoom( map ) - disable the sync of zoom for map
@@ -669,9 +746,9 @@
             if (map.options && map.options.mapSync && (map._mapSync == this) && !map.options.mapSync.isMainMap){
                 map.options.mapSync.zoomEnabled = false;
                 map.fire("mapsynczoomdisabled");
-            } 
-        }, 
-            
+            }
+        },
+
         //**************************************************************************
         //setZoomOffset( map, zoomOffset ) - Change the zoom-offset for map relative to main-map
         setZoomOffset: function( map, zoomOffset ){
@@ -680,11 +757,11 @@
                 map._mapSync_adjustMinMaxZoom();
 
                 if (map.options.mapSync.enabled && map.options.mapSync.zoomEnabled)
-                    map.setView(this.mainMap.getCenter(), this.mainMap.getZoom() + map.options.mapSync.zoomOffset, NO_ANIMATION );
-                
+                    map.setView(this.mainMap.getCenter(), this.mainMap.getZoom() + map.options.mapSync.zoomOffset, NO_ANIMATION_RESET );
+
                 map.fire("mapsynczoomoffsetchanged");
-            } 
-        }, 
+            }
+        },
 
         //**************************************************************************
         //remove( map )
@@ -719,8 +796,8 @@
 
         //**************************************************************************
         //_updateMaps - Update the center and zoom for all enabled maps to be equal mainMap
-        _updateMaps: function(){ 
-            this.mainMap.setView( this.mainMap.getCenter(), this.mainMap.getZoom(), NO_ANIMATION );
+        _updateMaps: function(){
+            this.mainMap.setView( this.mainMap.getCenter(), this.mainMap.getZoom() );
         },
 
         //**************************************************************************
@@ -728,9 +805,9 @@
         // activeMap = the map being dragged
         _updateShadowMaps: function( activeMap ){
 
-            //Clean up: Hide all shadow-maps 
+            //Clean up: Hide all shadow-maps
             this._hideShadowMaps();
-            
+
             //Draw all shadow maps
             activeMap._mapSync_updateShadow();
 
@@ -740,20 +817,20 @@
         //_hideShadowMaps - hide all 'shadow' maps
         _hideShadowMaps: function(){
             this._forEachMap({
-                mapFunction : function(map){ 
+                mapFunction : function(map){
                     map._mapSync_hideShadowMaps();
                 },
                 inclDisabled: true
             });
         },
-            
-     
+
+
         //**************************************************************************
-        //_updateAllMinMaxZoom - Update all maps min- and maxZoom acording to the 
+        //_updateAllMinMaxZoom - Update all maps min- and maxZoom acording to the
         //main-map
         _updateAllMinMaxZoom: function(){
             this._forEachMap({
-                mapFunction: function ( map ){ 
+                mapFunction: function ( map ){
                     map._mapSync_adjustMinMaxZoom();
                 },
                 excludeMap: this.mainMap
@@ -768,8 +845,8 @@
             //Add passive-class to all sibling-maps
             if (map.options.mapSync.enabled)
                 this._forEachMap({
-                    mapFunction: function(map){ 
-                        map.options.mapSync.$map_container.addClass( 'map-sync-passive' ); 
+                    mapFunction: function(map){
+                        map.options.mapSync.$map_container.addClass( 'map-sync-passive' );
                     },
                     excludeMap: map
             });
@@ -793,8 +870,8 @@
         //_updateCursor - Update the latlng-position of all the shadow-cursors
         _updateCursor: function( latlng ){
             this._forEachMap({
-                mapFunction : function( map, latlng ) { 
-                    map.options.mapSync.cursorMarker.setLatLng( latlng ); 
+                mapFunction : function( map, latlng ) {
+                    map.options.mapSync.cursorMarker.setLatLng( latlng );
                 },
                 arguments   : [latlng],
                 inclDisabled: true
@@ -804,9 +881,9 @@
         //**************************************************************************
         //_showOnFirstMove - call this.show() the first time the mouse is moved on one of the maps
         _showOnFirstMove: function(){
-            var THIS = this;
+            var _this = this;
             this._forEachMap({
-                mapFunction : function( map ) { map.once('mousemove', THIS.show, THIS ); },
+                mapFunction : function( map ) { map.once('mousemove', _this.show, _this ); },
                 inclDisabled: true
             });
         },
@@ -821,13 +898,11 @@
         //_setCursorFromElement
         _setCursorFromElement: function( element ){
             var cursor = $(element).css('cursor');
-                    
             //Adjust 'auto' to specific tagName (primary IE)
             if (cursor == 'auto'){
-              switch (element.tagName.toUpperCase()){
-                case 'A': cursor = 'pointer'; break;
-              }
-              
+                switch (element.tagName.toUpperCase()){
+                    case 'A': cursor = 'pointer'; break;
+                }
             }
             this._changeCursor( cssCursorToIconName[ cursor ] || 'default' );
         },
@@ -835,7 +910,7 @@
         //**************************************************************************
         //_changeCursor
         _changeCursor: function( newIconName ){
-            var iconMargin = iconList[newIconName].iconMargin || [0,0];
+            var iconMargin = iconList[newIconName] && iconList[newIconName].iconMargin ? iconList[newIconName].iconMargin : [0,0];
             this._forEachMap({
                 mapFunction: function( map, oldIconName, newIconName, iconMargin ) {
                     $(map.options.mapSync.cursorMarker._icon)

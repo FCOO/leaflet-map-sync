@@ -1,6 +1,6 @@
 {
   "name": "leaflet-map-sync",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage": "https://github.com/FCOO/leaflet-map-sync",
   "author": "NielsHolt nho@fcoo.dk",
   "description": "package.json is only use for building the package. see bower.json for more info",
@@ -8,9 +8,9 @@
     "type": "git",
     "url": "git://github.com/FCOO/leaflet-map-sync.git"
   },
+  "dependencies": {},
   "devDependencies": {
-    "grunt": "^1.0.0",
-    "grunt-fcoo-grunt-plugin": "^2.0.0"
+    "grunt-fcoo-grunt-plugin": "^5.0.0"
   },
   "license": "MIT"
 }

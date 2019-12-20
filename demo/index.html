@@ -9,11 +9,11 @@
 	<meta name='copyright' content='FCOO'>
 	<meta name='owner' content='FCOO'>
 
-  <link  href="bower_components.css" rel="stylesheet">	
-  <link  href="../src/leaflet-map-sync.css" rel="stylesheet">	
+  <link  href="bower_components.css" rel="stylesheet">
+  <link  href="../src/leaflet-map-sync.css" rel="stylesheet">
 	<style>
 		.map-container {
-			width: 25%; 
+			width: 25%;
 			height: 300px;
 			margin: 4px;
 			float:left;
@@ -25,7 +25,58 @@
             display: inline-block;
             text-align: center;
         }
+        .cursor-div {
+            display: inline-block;
+            padding:10px;
+            width: 200px;
+            border: 1px solid black;
+        }
 
+        .cross-marker {
+            z-index: 401;
+            box-sizing: border-box;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+        }
+        .cross-marker * {
+            position: absolute;
+            box-sizing: border-box;
+        }
+        .cross-marker > * {
+            width: 50%;
+            height: 50%;
+        }
+        .cross-marker > *:first-child {
+            top: 1px;
+            left: 1px;
+        }
+        .cross-marker > *:first-child > div {
+            bottom: 0;
+            right: 0;
+            width: 75%;
+            height: 75%;
+            border-bottom: 2px solid black;
+            border-right: 2px solid black;
+        }
+        .cross-marker > *:last-child {
+            bottom: 1px;
+            right: 1px;
+        }
+        .cross-marker > *:last-child > div {
+            top: 0;
+            left: 0;
+            width: 75%;
+            height: 75%;
+            border-top: 2px solid black;
+            border-left: 2px solid black;
+        }
+
+        .test {
+            width: 10000px;
+            height: 10000px;
+            background: rgba(0,0,0,0.5);
+        }
 	</style>
 </head>
 
@@ -45,10 +96,48 @@
 		<button id="disableZoomMap3">Disable right map zoom sync</button>
 		<button id="zoomOffsetPlus2Map3">Set right map zoom offset = +2</button>
 		<button id="zoomOffsetMinus2Map3">Set right map zoom offset = -2</button>
-
 	</div>
+<!--
+	<div style="float:left;width:100%">
+        <div class="cursor-div" style="cursor:default">default</div>
+        <div class="cursor-div" style="cursor:auto">auto</div>
+        <div class="cursor-div" style="cursor:context-menu">context-menu</div>
+        <div class="cursor-div" style="cursor:help">help</div>
+        <div class="cursor-div" style="cursor:progress">progress</div>
+        <div class="cursor-div" style="cursor:alias">alias</div>
+        <div class="cursor-div" style="cursor:copy">copy</div>
+        <div class="cursor-div" style="cursor:none">none</div>
+        <div class="cursor-div" style="cursor:pointer">pointer</div>
+        <div class="cursor-div" style="cursor:wait">wait</div>
+        <div class="cursor-div" style="cursor:cell">cell</div>
+        <div class="cursor-div" style="cursor:crosshair">crosshair</div>
+        <div class="cursor-div" style="cursor:text">text</div>
+        <div class="cursor-div" style="cursor:vertical-text">vertical-text</div>
+        <div class="cursor-div" style="cursor:move">move</div>
+        <div class="cursor-div" style="cursor:not-allowed">not-allowed</div>
+        <div class="cursor-div" style="cursor:no-drop">no-drop</div>
+        <div class="cursor-div" style="cursor:ew-resize">ew-resize</div>
+        <div class="cursor-div" style="cursor:e-resize">e-resize</div>
+        <div class="cursor-div" style="cursor:w-resize">w-resize</div>
+        <div class="cursor-div" style="cursor:ns-resize">ns-resize</div>
+        <div class="cursor-div" style="cursor:n-resize">n-resize</div>
+        <div class="cursor-div" style="cursor:s-resize">s-resize</div>
+        <div class="cursor-div" style="cursor:nesw-resize">nesw-resize</div>
+        <div class="cursor-div" style="cursor:ne-resize">ne-resize</div>
+        <div class="cursor-div" style="cursor:sw-resize">sw-resize</div>
+        <div class="cursor-div" style="cursor:nwse-resize">nwse-resize</div>
+        <div class="cursor-div" style="cursor:nw-resize">nw-resize</div>
+        <div class="cursor-div" style="cursor:se-resize">se-resize</div>
+        <div class="cursor-div" style="cursor:col-resize">col-resize</div>
+        <div class="cursor-div" style="cursor:row-resize">row-resize</div>
+        <div class="cursor-div" style="cursor:all-scroll">all-scroll</div>
+        <div class="cursor-div" style="cursor:zoom-in">zoom-in</div>
+        <div class="cursor-div" style="cursor:zoom-out">zoom-out</div>
+        <div class="cursor-div" style="cursor:grab">grab</div>
+        <div class="cursor-div" style="cursor:grabbing">grabbing</div>
+	</div>
+ -->
 
-    
     <script src="bower_components.js"></script>
 	<script src="../src/leaflet-map-sync.js"></script>
 
@@ -62,19 +151,19 @@
 
             globalTileSize = 256,
 
-            globalLayerUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'; 
-            //globalLayerUrl = 'http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png'; 
+            globalLayerUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+            //globalLayerUrl = 'http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png';
             //globalLayerUrl = 'https://tiles04.fcoo.dk/tiles/tiles_bckgrnd_512_mercator_201508030000/{z}/{x}/{y}.png'; globalTileSize = 512;
-            
 
-		//*************************************************************		
+
+		//*************************************************************
         var map1 = mapSync.add(L.map('map', {attributionControl: false, minZoom: map1minzoom, maxZoom:map1maxzoom} ).setView([51.505, -0.09], map1zoom));
 
-        //*************************************************************		
+        //*************************************************************
 		mapSync.add(L.map('map2', {attributionControl: false}), {zoomOffset: +2 });
 
-        //*************************************************************		
-		var map3 = mapSync.add(L.map('map3', {attributionControl: false}), {zoomOffset: -2});
+        //*************************************************************
+		var map3 = mapSync.add(L.map('map3', {worldCopyJump: true, attributionControl: false}), {zoomOffset: -2});
         $('#enableMap3').click( function(){ mapSync.enable( map3 ); });
 		$('#disableMap3').click( function(){ mapSync.disable( map3 ); });
 
@@ -85,15 +174,20 @@
         $('#zoomOffsetMinus2Map3').click( function(){ mapSync.setZoomOffset( map3, -2 ); });
 
 
-        //*************************************************************		
-		mapSync.add(L.map('map4', {attributionControl: false}), {zoomOffset: 1 });
-		mapSync.add(L.map('map5', {attributionControl: false}), {zoomOffset: 1 });
-		mapSync.add(L.map('map6', {attributionControl: false}), {zoomOffset: 1 });
+        //*************************************************************
+		mapSync.add(L.map('map4', {worldCopyJump: true, attributionControl: false}), {zoomOffset: 1 });
+		mapSync.add(L.map('map5', {worldCopyJump: true, attributionControl: false}), {zoomOffset: 1 });
+		mapSync.add(L.map('map6', {worldCopyJump: true, attributionControl: false}), {zoomOffset: 1 });
 
 
-        //*************************************************************		
+        //*************************************************************
         mapSync.forEachMap( function( index, map ){
-            L.tileLayer(globalLayerUrl, {tileSize: globalTileSize} ).addTo(map);
+            L.tileLayer(globalLayerUrl, {
+                tileSize: globalTileSize,
+                minZoom : map1minzoom,
+                maxZoom : map1maxzoom
+
+            }).addTo(map);
 
             L.circle([51.505, -0.09], 50000, {
 			    color: 'red',
@@ -107,9 +201,9 @@
 			    [52.51,  -0.09]
 		    ], {color: 'green'}).addTo(map).bindPopup("I am polygon at map "+index);
 
-        
-            var crossMarker = $('<div class="cross-marker"><div><div/></div><div><div/></div></div>'); 
-            $( map.getContainer() ).append( crossMarker ); 
+
+            var crossMarker = $('<div class="cross-marker"><div><div/></div><div><div/></div></div>');
+            $( map.getContainer() ).append( crossMarker );
 /*
 		    function openPopup( e ) {
 			    var popup = L.popup();
