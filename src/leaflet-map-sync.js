@@ -79,11 +79,11 @@
             cssCursorToIconName[ cssClasses[i] ] = iconName;
     }
 
-    var ANIMATION          =  { animate: true               },
+    var //ANIMATION          =  { animate: true               },
         NO_ANIMATION       =  { animate: false              },
         NO_ANIMATION_RESET =  { animate: false, reset: true },
 
-        panZoomOptionsZoomEnd = ANIMATION,      /* 1 */
+        panZoomOptionsZoomEnd = NO_ANIMATION,      /* 1 */
         panZoomOptionsOther   = NO_ANIMATION,   /* 2 */
         panZoomOptionsDragEnd = NO_ANIMATION;   /* 3 */
 /*
