@@ -163,7 +163,7 @@
 		mapSync.add(L.map('map2', {attributionControl: false}), {zoomOffset: +2 });
 
         //*************************************************************
-		var map3 = mapSync.add(L.map('map3', {worldCopyJump: true, attributionControl: false}), {zoomOffset: -2});
+		var map3 = mapSync.add(L.map('map3', {/*worldCopyJump: true, */attributionControl: false}), {zoomOffset: -2});
         $('#enableMap3').click( function(){ mapSync.enable( map3 ); });
 		$('#disableMap3').click( function(){ mapSync.disable( map3 ); });
 
@@ -188,6 +188,7 @@
                 maxZoom : map1maxzoom
 
             }).addTo(map);
+            map.setView([51.505, -0.09], map1zoom);
 
             L.circle([51.505, -0.09], 50000, {
 			    color: 'red',

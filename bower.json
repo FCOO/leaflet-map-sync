@@ -1,38 +1,46 @@
 {
-  "name": "leaflet-map-sync",
-  "version": "1.0.2",
-  "homepage": "https://github.com/FCOO/leaflet-map-sync",
-  "authors": [
-    "Niels Holt"
-  ],
-  "description": "",
-  "main": [
-    "dist/leaflet-map-sync.js",
-    "dist/leaflet-map-sync.css"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/FCOO/leaflet-map-sync.git"
-  },
-  "dependencies": {
-    "jquery": "latest",
-    "leaflet": "1.4.0",
-    "modernizr-javascript": "FCOO/modernizr-javascript#latest"
-  },
-  "devDependencies": {
-    "bourbon": "latest",
-    "modernizr-mixin": "latest",
-    "mathsass": "latest"
-  },
-  "license": "MIT",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ],
-  "moduleType": [
-    "es6"
-  ]
+    "name": "leaflet-map-sync",
+    "version": "1.0.2",
+    "homepage": "https://github.com/FCOO/leaflet-map-sync",
+    "authors": [
+        "Niels Holt"
+    ],
+    "description": "",
+    "main": [
+        "dist/leaflet-map-sync.js",
+        "dist/leaflet-map-sync.css"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/FCOO/leaflet-map-sync.git"
+    },
+    "dependencies": {
+        "jquery": "latest",
+        "leaflet": "1.4.0",
+        "modernizr-javascript": "FCOO/modernizr-javascript#latest",
+        "Leaflet.Sync": "jieter/Leaflet.Sync#^0.2.4"
+    },
+    "overrides": {
+        "Leaflet.Sync": {
+            "dependencies": {
+                "leaflet": "latest"
+            }
+        }
+    },
+    "devDependencies": {
+        "bourbon": "latest",
+        "modernizr-mixin": "latest",
+        "mathsass": "latest"
+    },
+    "license": "MIT",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "test",
+        "tests"
+    ],
+    "moduleType": [
+        "es6"
+    ]
 }

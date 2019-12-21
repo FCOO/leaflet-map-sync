@@ -19,31 +19,82 @@
 
 (function ($, L, window, document, undefined) {
     "use strict";
-    var //ANIMATION          =  { animate: true               },
-        //NO_ANIMATION       =  { animate: false              },
-        NO_ANIMATION_RESET =  { animate: false, reset: true },
 
-        panZoomOptionsZoomEnd = NO_ANIMATION,      /* 1 */
-        panZoomOptionsOther   = NO_ANIMATION,   /* 2 */
-        panZoomOptionsDragEnd = NO_ANIMATION;   /* 3 */
+  /************************************************************************
+  All icon-classes and cooresponding css cursor-styles. * = Not supported
+  icon-class    css-class
+  ----------    ---------
+  cursor        auto, default, initial, inherit, context-menu, help, progress, alias, copy
+  pointer       pointer
+  none          none
+  wait          progress, wait
+  cell          cell
+  crosshair     crosshair
+  text          text
+  vertical-text vertical-text
+  move          move, all-scroll
+  not-allowed   no-drop, not-allowed
+  ns-resize     ns-resize, n-resize, s-resize
+  ew-resize     ew-resize, e-resize, w-resize
+  ne-resize     ne-resize, sw-resize, nesw-resize
+  nw-resize     nw-resize, se-resize, nwse-resize
+  col-resize    col-resize
+  row-resize    row-resize
+  zoom-in       zoom-in
+  zoom-out      zoom-out
+  grab          grab, -webkit-grab
+  grabbing      grabbing, -webkit-grabbing
+  ************************************************************************/
+    var iconSize = [22, 26],
+        iconList = {
+            'cursor'       : { iconMargin: [ -1,  0], cssClasses: ['auto', 'default', 'initial', 'inherit', 'context-menu', 'help', 'progress', 'alias', 'copy'] },
+            'pointer'      : { iconMargin: [ -7, -2], cssClasses: ['pointer'] },
+            'none'         : { iconMargin: [  0,  0], cssClasses: ['none'] },
+            'wait'         : { iconMargin: [-11,-10], cssClasses: ['progress', 'wait'] },
+            'cell'         : { iconMargin: [-11,-11], cssClasses: ['cell'] },
+            'crosshair'    : { iconMargin: [-11,-10], cssClasses: ['crosshair'] },
+            'move'         : { iconMargin: [-11, -9], cssClasses: ['move', 'all-scroll'] },
+            'not-allowed'  : { iconMargin: [-11,-11], cssClasses: ['no-drop', 'not-allowed'] },
+            'ns-resize'    : { iconMargin: [-11, -9], cssClasses: ['ns-resize', 'n-resize', 's-resize'] },
+            'ew-resize'    : { iconMargin: [-11, -9], cssClasses: ['ew-resize', 'e-resize', 'w-resize'] },
+            'ne-resize'    : { iconMargin: [-11,-10], cssClasses: ['ne-resize', 'sw-resize', 'nesw-resize'] },
+            'nw-resize'    : { iconMargin: [-11,-10], cssClasses: ['nw-resize', 'se-resize', 'nwse-resize'] },
+            'zoom-in'      : { iconMargin: [-10, -9], cssClasses: ['zoom-in'] },
+            'zoom-out'     : { iconMargin: [-10, -9], cssClasses: ['zoom-out'] },
+            'grab'         : { iconMargin: [ -8, -8], cssClasses: ['grab', '-webkit-grab', '-moz-grab'] },
+            'grabbing'     : { iconMargin: [ -8, -8], cssClasses: ['grabbing', '-webkit-grabbing', '-moz-grabbing'] },
+            'col-resize'   : { iconMargin: [-11, -8], cssClasses: ['col-resize'] },
+            'row-resize'   : { iconMargin: [ -8,-11], cssClasses: ['row-resize'] },
+            'text'         : { iconMargin: [ -2, -8], cssClasses: ['text'] },
+            'vertical-text': { iconMargin: [ -8, -3], cssClasses: ['vertical-text'] },
 
-
-    var NO_ANIMATION = {
-        animate: false,
-        reset: true,
-        disableViewprereset: true
     };
 
-
-/*
-TESTS AF FORSKELLIGE MODES
-                                                        Desktop                             Touch
-1           2               3                       pan         zoom                    pan         zoom
-ANIMATION   NO_ANIMATION    NO_ANIMATION            Ok          NO                      ukendt      ukendt
-ANIMATION   NO_ANIMATION    NO_ANIMATION_RESET      NO          NO                      ukendt      ukendt
-
-
-*/
+    //Create a fast look-up object
+    var cssCursorToIconName = {},
+        cssClasses;
+    for (var iconName in iconList){
+        cssClasses = iconList[iconName].cssClasses;
+        for (var i=0; i<cssClasses.length; i++ )
+            cssCursorToIconName[ cssClasses[i] ] = iconName;
+    }
+//HER
+//HER    var //ANIMATION          =  { animate: true               },
+//HER        NO_ANIMATION       =  { animate: false              },
+//HER        NO_ANIMATION_RESET =  { animate: false, reset: true },
+//HER
+//HER        panZoomOptionsZoomEnd = NO_ANIMATION,      /* 1 */
+//HER        panZoomOptionsOther   = NO_ANIMATION,   /* 2 */
+//HER        panZoomOptionsDragEnd = NO_ANIMATION;   /* 3 */
+//HER/*
+//HERTESTS AF FORSKELLIGE MODES
+//HER                                                        Desktop                             Touch
+//HER1           2               3                       pan         zoom                    pan         zoom
+//HERANIMATION   NO_ANIMATION    NO_ANIMATION            Ok          NO                      ukendt      ukendt
+//HERANIMATION   NO_ANIMATION    NO_ANIMATION_RESET      NO          NO                      ukendt      ukendt
+//HER
+//HER
+//HER*/
 
     /***********************************************************
     ************************************************************
@@ -133,87 +184,10 @@ ANIMATION   NO_ANIMATION    NO_ANIMATION_RESET      NO          NO              
             this.setMaxZoom( this._mapSync.mainMap.getMaxZoom() + this.options.mapSync.zoomOffset, true );
         },
 
-
-        _selfSetView: function (e) {
-            // reset the map, and let setView synchronize the others.
-            this.setView(this.getCenter(), this.getZoom(), NO_ANIMATION);
-        },
-
-        _syncOnMoveend: function (e) {
-            if (this._syncDragend) {
-                // This is 'the moveend' after the dragend.
-                // Without inertia, it will be right after,
-                // but when inertia is on, we need this to detect that.
-                this._syncDragend = false; // before calling setView!
-                this._selfSetView(e);
-//HER                this._syncMaps.forEach(function (toSync) {
-//HER                    toSync.fire('moveend');
-//HER                });
-                var _this = this;
-                this._mapSync._forEachMap( function(nextMap) {
-                    if (_this !== nextMap)
-                        nextMap.fire('moveend');
-                });
-            }
-        },
-
-        _syncOnDragend: function (e) {
-            // It is ugly to have state, but we need it in case of inertia.
-            this._syncDragend = true;
-        },
-
-
-        /***********************************
-        setView
-        ***********************************/
-        setView: function( setView ) {
-            return function(center, zoom, options, sync){
-                // Use this sandwich to disable and enable viewprereset
-                // around setView call
-                function sandwich (obj, fn) {
-                    var viewpreresets = [];
-                    var doit = options && options.disableViewprereset && obj && obj._events;
-                    if (doit) {
-                        // The event viewpreresets does an invalidateAll,
-                        // that reloads all the tiles.
-                        // That causes an annoying flicker.
-                        viewpreresets = obj._events.viewprereset;
-                        obj._events.viewprereset = [];
-                    }
-                    var result = fn(obj);
-                    if (doit) {
-                        // restore viewpreresets event to its previous values
-                        obj._events.viewprereset = viewpreresets;
-                    }
-                    return result;
-                }
-
-                // Looks better if the other maps 'follow' the active one,
-                // so call this before _syncMaps
-                var result = sandwich(this, function (obj) {
-                    return setView.call(obj, center, zoom, options);
-                });
-
-                if (!sync && this._mapSync && this.options.mapSync.enabled) {
-                    var _this = this,
-                        center = this.getCenter(),
-                        newMainZoom = this.options.mapSync.zoomEnabled ? zoom - this.options.mapSync.zoomOffset : null;
-
-                    this._mapSync._forEachMap( function(nextMap) {
-                        if (_this !== nextMap)
-                            sandwich(nextMap, function (obj) {
-                                var newMapZoom = (newMainZoom !== null) && nextMap.options.mapSync.zoomEnabled ? newMainZoom + nextMap.options.mapSync.zoomOffset : nextMap.getZoom();
-
-                                return nextMap.setView(center, newMapZoom, options, true );
-                            });
-                    });
-                }
-
-                return result;
-            };
-        } (L.Map.prototype.setView),
-
-//HER        ORIGINALsetView: function( setView ) {
+//HER        /***********************************
+//HER        setView
+//HER        ***********************************/
+//HER        setView: function( setView ) {
 //HER            return function(center, zoom/*, zoomPanOptions*/){
 //HER                var mapSync = this._mapSync;
 //HER
@@ -237,114 +211,69 @@ ANIMATION   NO_ANIMATION    NO_ANIMATION_RESET      NO          NO              
 //HER        } (L.Map.prototype.setView),
 
 
-        /***********************************
-        panTo
-        ***********************************/
-        ER_IKKE_MED_panTo: function( panTo ) {
-            return function(){
-                //Original function/method
-                panTo.apply(this, arguments);
-                 if (this._mapSync && this.options.mapSync.enabled)
-                    this._mapSync._forEachMap({
-                        mapFunction: function( map, arg ){
-                            panTo.apply(map, arg);
-                        },
-                        arguments  : arguments,
-                        excludeMap : this
-                    });
+//HER        /***********************************
+//HER        panTo
+//HER        ***********************************/
+//HER        panTo: function( panTo ) {
+//HER            return function(){
+//HER                //Original function/method
+//HER                panTo.apply(this, arguments);
+//HER                 if (this._mapSync && this.options.mapSync.enabled)
+//HER                    this._mapSync._forEachMap({
+//HER                        mapFunction: function( map, arg ){
+//HER                            panTo.apply(map, arg);
+//HER                        },
+//HER                        arguments  : arguments,
+//HER                        excludeMap : this
+//HER                    });
+//HER
+//HER                return this;
+//HER            };
+//HER        } (L.Map.prototype.panTo),
 
-                return this;
-            };
-        } (L.Map.prototype.panTo),
-
-        /***********************************
-        panBy
-        ***********************************/
-        panBy: function( panBy ) {
-            return function ( offset, options/*, sync */) {
+//HER        /***********************************
+//HER        panBy
+//HER        ***********************************/
+//HER        panBy: function( panBy ) {
+//HER            return function ( point ) {
+//HER
 //HER                //Original function/method
 //HER                panBy.apply(this, arguments);
-                var _this = this;
-                //pan the other maps if the pan is by keyboard
-                if (this._mapSync && this.options.mapSync.enabled)
-                    this._mapSync._forEachMap( function(nextMap){
-                        if (nextMap !== _this)
-                            panBy.call(nextMap, offset, options);
-                    });
-/*
-                    this._mapSync._forEachMap({
-                        mapFunction: function( map, point, activeMap ){
-                            point = $.isArray(point) ? L.point(point) : point;
-                            var factor = Math.pow( 2, map.getZoom() - activeMap.getZoom() );
-                            panBy.call(map, point.multiplyBy( factor ));
-                        },
-                        arguments  : [point, this],
-                        excludeMap : this
-                    });
-*/
+//HER
+//HER                //pan the other maps if the pan is by keyboard
+//HER                if (this._mapSync && this.options.mapSync.enabled)
+//HER                    this._mapSync._forEachMap({
+//HER                        mapFunction: function( map, point, activeMap ){
+//HER                            point = $.isArray(point) ? L.point(point) : point;
+//HER                            var factor = Math.pow( 2, map.getZoom() - activeMap.getZoom() );
+//HER                            panBy.call(map, point.multiplyBy( factor ));
+//HER                        },
+//HER                        arguments  : [point, this],
+//HER                        excludeMap : this
+//HER                });
 //HER                return this;
-                //Original function/method
-                return panBy.apply(this, arguments);
-            };
+//HER            };
+//HER        } (L.Map.prototype.panBy),
 
-        } (L.Map.prototype.panBy),
-
-        ORIGINALpanBy: function( panBy ) {
-            return function ( point ) {
-
-                //Original function/method
-                panBy.apply(this, arguments);
-
-                //pan the other maps if the pan is by keyboard
-                if (this._mapSync && this.options.mapSync.enabled)
-                    this._mapSync._forEachMap({
-                        mapFunction: function( map, point, activeMap ){
-                            point = $.isArray(point) ? L.point(point) : point;
-                            var factor = Math.pow( 2, map.getZoom() - activeMap.getZoom() );
-                            panBy.call(map, point.multiplyBy( factor ));
-                        },
-                        arguments  : [point, this],
-                        excludeMap : this
-                });
-                return this;
-            };
-        } (L.Map.prototype.panBy),
-
-        /***********************************
-        _onResize
-        ***********************************/
-        _onResize: function( _onResize ){
-            return function (){
+//HER        /***********************************
+//HER        _onResize
+//HER        ***********************************/
+//HER        _onResize: function( _onResize ){
+//HER            return function (){
 //HER                //Original function/method
 //HER                _onResize.apply(this, arguments);
-
-                if (this._mapSync && this.options.mapSync.enabled)
-                    this._mapSync._forEachMap({
-                        mapFunction: function( map, arg ){
-                            _onResize.apply(map, arg);
-                        },
-                        arguments  : arguments,
-                        excludeMap : this
-                    });
+//HER
+//HER                if (this._mapSync && this.options.mapSync.enabled)
+//HER                    this._mapSync._forEachMap({
+//HER                        mapFunction: function( map, arg ){
+//HER                            _onResize.apply(map, arg);
+//HER                        },
+//HER                        arguments  : arguments,
+//HER                        excludeMap : this
+//HER                    });
 //HER                return this;
-                //Original function/method
-                return _onResize.apply(this, arguments);
-
-            };
-        } (L.Map.prototype._onResize),
-
-        _stop: function ( _stop) {
-            return function (){
-                _stop.call(this);
-                var _this = this;
-                if (this._mapSync && this.options.mapSync.enabled)
-                    this._mapSync._forEachMap( function(nextMap){
-                        if (nextMap !== _this)
-                            _stop.call(nextMap);
-                    });
-            }
-        } (L.Map.prototype._stop),
-
+//HER            };
+//HER        } (L.Map.prototype._onResize)
     });
 
 
@@ -360,107 +289,40 @@ ANIMATION   NO_ANIMATION    NO_ANIMATION_RESET      NO          NO              
 //HER            this.setView( this.getCenter(), this.getZoom(), panZoomOptionsDragEnd);
 //HER    }
 
-    function addMapEvents_sync( map ){
+//HER    function addMapEvents_sync( map ){
 //HER        map.on('zoomend',    map_on_zoomend_sync   );
 //HER        map.on('dragend',    map_on_dragend_sync   );
-
-        // on these events, we should reset the view on every synced map
-        // dragstart is due to inertia
-        map.on('resize zoomend', map._selfSetView);
-        map.on('moveend',        map._syncOnMoveend);
-        map.on('dragend',        map._syncOnDragend);
-
-
-        //Extend this.dragging._draggable._updatePosition (1)
-        map.dragging._draggable._updatePosition = function ( _updatePosition ) {
-            return function(){
-                //Original function/method
-                _updatePosition.apply(this, arguments);
-
-                if (map.options.mapSync.enabled)
-                    map._mapSync._forEachMap({
-                        mapFunction: function( map, _currentDraggable, activeMap ){
-                            //Adjust _newPos by the different in zoom between the active (dragging) map and the map
-                            var factor = Math.pow( 2, map.getZoom() - activeMap.getZoom() );
-                            L.DomUtil.setPosition(
-                                map.dragging._draggable._element,
-                                _currentDraggable._newPos.multiplyBy( factor )
-                            );
+//HER
+//HER        //Extend this.dragging._draggable._updatePosition (1)
+//HER        map.dragging._draggable._updatePosition = function ( _updatePosition ) {
+//HER            return function(){
+//HER                //Original function/method
+//HER                _updatePosition.apply(this, arguments);
+//HER
+//HER                if (map.options.mapSync.enabled)
+//HER                    map._mapSync._forEachMap({
+//HER                        mapFunction: function( map, _currentDraggable, activeMap ){
+//HER                            //Adjust _newPos by the different in zoom between the active (dragging) map and the map
+//HER                            var factor = Math.pow( 2, map.getZoom() - activeMap.getZoom() );
+//HER                            L.DomUtil.setPosition(
+//HER                                map.dragging._draggable._element,
+//HER                                _currentDraggable._newPos.multiplyBy( factor )
+//HER                            );
 //HER                            //Fire 'moveend' to force updating the map
 //HER                            map.fire('moveend');
-                            //Fire 'move' to force updating the map
-                            map.fire('move');
-                        },
-                        arguments : [this, map],
-                        excludeMap: map
-                    });
-            };
-        }( L.Draggable.prototype._updatePosition );
-    }
+//HER                        },
+//HER                        arguments : [this, map],
+//HER                        excludeMap: map
+//HER                    });
+//HER            };
+//HER        }( L.Draggable.prototype._updatePosition );
+//HER    }
 
     /********************************************************************
     *********************************************************************
     2: CREATING AND UPDATING THE 'SHADOW' CURSOR
-     *********************************************************************
+    *********************************************************************
     ********************************************************************/
-    /************************************************************************
-    All icon-classes and cooresponding css cursor-styles. * = Not supported
-    icon-class    css-class
-    ----------    ---------
-    cursor        auto, default, initial, inherit, context-menu, help, progress, alias, copy
-    pointer       pointer
-    none          none
-    wait          progress, wait
-    cell          cell
-    crosshair     crosshair
-    text          text
-    vertical-text vertical-text
-    move          move, all-scroll
-    not-allowed   no-drop, not-allowed
-    ns-resize     ns-resize, n-resize, s-resize
-    ew-resize     ew-resize, e-resize, w-resize
-    ne-resize     ne-resize, sw-resize, nesw-resize
-    nw-resize     nw-resize, se-resize, nwse-resize
-    col-resize    col-resize
-    row-resize    row-resize
-    zoom-in       zoom-in
-    zoom-out      zoom-out
-    grab          grab, -webkit-grab
-    grabbing      grabbing, -webkit-grabbing
-    ************************************************************************/
-    var iconSize = [22, 26],
-        iconList = {
-            'cursor'       : { iconMargin: [ -1,  0], cssClasses: ['auto', 'default', 'initial', 'inherit', 'context-menu', 'help', 'progress', 'alias', 'copy'] },
-            'pointer'      : { iconMargin: [ -7, -2], cssClasses: ['pointer'] },
-            'none'         : { iconMargin: [  0,  0], cssClasses: ['none'] },
-            'wait'         : { iconMargin: [-11,-10], cssClasses: ['progress', 'wait'] },
-            'cell'         : { iconMargin: [-11,-11], cssClasses: ['cell'] },
-            'crosshair'    : { iconMargin: [-11,-10], cssClasses: ['crosshair'] },
-            'move'         : { iconMargin: [-11, -9], cssClasses: ['move', 'all-scroll'] },
-            'not-allowed'  : { iconMargin: [-11,-11], cssClasses: ['no-drop', 'not-allowed'] },
-            'ns-resize'    : { iconMargin: [-11, -9], cssClasses: ['ns-resize', 'n-resize', 's-resize'] },
-            'ew-resize'    : { iconMargin: [-11, -9], cssClasses: ['ew-resize', 'e-resize', 'w-resize'] },
-            'ne-resize'    : { iconMargin: [-11,-10], cssClasses: ['ne-resize', 'sw-resize', 'nesw-resize'] },
-            'nw-resize'    : { iconMargin: [-11,-10], cssClasses: ['nw-resize', 'se-resize', 'nwse-resize'] },
-            'zoom-in'      : { iconMargin: [-10, -9], cssClasses: ['zoom-in'] },
-            'zoom-out'     : { iconMargin: [-10, -9], cssClasses: ['zoom-out'] },
-            'grab'         : { iconMargin: [ -8, -8], cssClasses: ['grab', '-webkit-grab', '-moz-grab'] },
-            'grabbing'     : { iconMargin: [ -8, -8], cssClasses: ['grabbing', '-webkit-grabbing', '-moz-grabbing'] },
-            'col-resize'   : { iconMargin: [-11, -8], cssClasses: ['col-resize'] },
-            'row-resize'   : { iconMargin: [ -8,-11], cssClasses: ['row-resize'] },
-            'text'         : { iconMargin: [ -2, -8], cssClasses: ['text'] },
-            'vertical-text': { iconMargin: [ -8, -3], cssClasses: ['vertical-text'] },
-
-    };
-
-    //Create a fast look-up object
-    var cssCursorToIconName = {},
-        cssClasses;
-    for (var iconName in iconList){
-        cssClasses = iconList[iconName].cssClasses;
-        for (var i=0; i<cssClasses.length; i++ )
-            cssCursorToIconName[ cssClasses[i] ] = iconName;
-    }
 
     /********************************************************************
     2: Map.include
@@ -574,16 +436,16 @@ ANIMATION   NO_ANIMATION    NO_ANIMATION_RESET      NO          NO              
     2: Events
     function map_on_XX_cursor(){
     ********************************************************************/
-    function map_whenReady_cursor(){
-        //Create a marker to be used as 'shadow' cursor and move it to a popupPane to make the cursor apear over the popups
-        var divIcon = L.divIcon({ className: 'map-sync-cursor-icon', iconSize: iconSize });
-        this.options.mapSync.cursorMarker = L.marker( this.getCenter(), {icon: divIcon} ).addTo(this);
-
-        //Create a new pane above everything and move the shadow-cursor from markerPane to this pane
-        var cursorContainer = L.DomUtil.create( 'div', 'map-sync-cursor-container', this._mapPane );
-        this._panes.markerPane.removeChild( this.options.mapSync.cursorMarker._icon );
-        cursorContainer.appendChild( this.options.mapSync.cursorMarker._icon );
-    }
+//HER    function map_whenReady_cursor(){
+//HER        //Create a marker to be used as 'shadow' cursor and move it to a popupPane to make the cursor apear over the popups
+//HER        var divIcon = L.divIcon({ className: 'map-sync-cursor-icon', iconSize: iconSize });
+//HER        this.options.mapSync.cursorMarker = L.marker( this.getCenter(), {icon: divIcon} ).addTo(this);
+//HER
+//HER        //Create a new pane above everything and move the shadow-cursor from markerPane to this pane
+//HER        var cursorContainer = L.DomUtil.create( 'div', 'map-sync-cursor-container', this._mapPane );
+//HER        this._panes.markerPane.removeChild( this.options.mapSync.cursorMarker._icon );
+//HER        cursorContainer.appendChild( this.options.mapSync.cursorMarker._icon );
+//HER    }
 
     function map_on_mouseover_cursor(){
         if (this._mapSync)
@@ -594,11 +456,11 @@ ANIMATION   NO_ANIMATION    NO_ANIMATION_RESET      NO          NO              
             this._mapSync._onMouseOutMap ( this );
     }
 
-    function map_on_mousemove_cursor( mouseEvent ){
-        //Update the position of the shadow-cursor
-        if (this._mapSync && this.options.mapSync.enabled)
-            this._mapSync._updateCursor( mouseEvent.latlng );
-    }
+//HER    function map_on_mousemove_cursor( mouseEvent ){
+//HER        //Update the position of the shadow-cursor
+//HER        if (this._mapSync && this.options.mapSync.enabled)
+//HER            this._mapSync._updateCursor( mouseEvent.latlng );
+//HER    }
 
     // Since no mousemove-event is fired when the map is panned or zoomed using the keyboard,
     // the following workaround is implemented:
@@ -624,14 +486,14 @@ ANIMATION   NO_ANIMATION    NO_ANIMATION_RESET      NO          NO              
     }
 
     function addMapEvents_cursor(map){
-        map.whenReady( map_whenReady_cursor, map);
+//HER        map.whenReady( map_whenReady_cursor, map);
 
         //Events to hide or show the cursor
         map.on('mouseover', map_on_mouseover_cursor);
         map.on('mouseout',  map_on_mouseout_cursor);
 
         //Events to update/change the position of the cursor
-        map.on('mousemove', map_on_mousemove_cursor);
+//HER        map.on('mousemove', map_on_mousemove_cursor);
 
         map.on('zoomstart dragstart movestart', map_on_xxstart_cursor);
         map.on('zoomend dragend moveend',       map_on_xxend_cursor  );
@@ -702,7 +564,7 @@ ANIMATION   NO_ANIMATION    NO_ANIMATION_RESET      NO          NO              
     ********************************************************************/
     L.MapSync = L.Class.extend({
         options: {
-            VERSION : "{VERSION}",
+//HER            VERSION : "{VERSION}",
             iconName: 'hand'
         },
 
@@ -728,7 +590,6 @@ ANIMATION   NO_ANIMATION    NO_ANIMATION_RESET      NO          NO              
 
 
             map._mapSync = this;
-            map._syncOffsetFns = {};
             map.options = map.options || {};
             map.options.mapSync = options;
             map.options.mapSync.$map_container.addClass('map-sync-container');
@@ -742,25 +603,43 @@ ANIMATION   NO_ANIMATION    NO_ANIMATION_RESET      NO          NO              
                 map.options.mapSync.zoomOffset = 0;
                 map.options.mapSync.zoomEnabled = true;
             }
-            else
-                //Set no-main on-loaded maps to match the main map
-                if (!map._loaded)
-                    map.setView(this.mainMap.getCenter(), this.mainMap.getZoom() +  options.zoomOffset, NO_ANIMATION_RESET );
+//HER            else
+//HER                //Set no-main on-loaded maps to match the main map
+//HER                if (!map._loaded)
+//HER                    map.setView(this.mainMap.getCenter(), this.mainMap.getZoom() +  options.zoomOffset, NO_ANIMATION_RESET );
 
-            /*********************************************************************************************
-            1: Events for sync
-            *********************************************************************************************/
-            addMapEvents_sync( map );
+//HER            /*********************************************************************************************
+//HER            1: Events for sync
+//HER            *********************************************************************************************/
+//HER            addMapEvents_sync( map );
+
+
+            //NEW use jieter/Leaflet.Sync to sync the map with the other added maps
+            var _map = map;
+
+            map.whenReady(function(){
+                var divIcon = L.divIcon({ className: 'map-sync-cursor-icon', iconSize: iconSize });
+//HER                _map.cursor = L.marker( _map.getCenter(), {_icon: divIcon} ).addTo(_map);
+
+                //_map.cursor = L.circleMarker([0, 0], options.syncCursorMarkerOptions).addTo(_map);
+
+                $.each(this.list, function(index, anotherMap){
+                    _map.sync(anotherMap,  {syncCursor: true});
+                    anotherMap.sync(_map,  {syncCursor: true});
+                });
+            }, this);
+
 
             /*********************************************************************************************
             2: Events for "shadow" cursor
             *********************************************************************************************/
-            addMapEvents_cursor( map );
+//TEMP            addMapEvents_cursor( map );
 
             /*********************************************************************************************
             3: Create and add events and overwrite methods to show, hide, and update
                'shadow' map showing either the active map in other maps or the main map in the active map
             *********************************************************************************************/
+/*
             //Create the 'shadow' map showing either the active map in other maps or the main map in the active map
             map.options.mapSync.$mapShadow = $('<div class="map-sync-shadow"><div/></div>');
             map.options.mapSync.$map_container.append( map.options.mapSync.$mapShadow );
@@ -782,7 +661,7 @@ ANIMATION   NO_ANIMATION    NO_ANIMATION_RESET      NO          NO              
 
             });
             addMapEvents_shadow(map);
-
+*/
 
             //Add to list
             this.list.push(map);
@@ -810,6 +689,7 @@ ANIMATION   NO_ANIMATION    NO_ANIMATION_RESET      NO          NO              
         //**************************************************************************
         //enable( map );
         enable: function( map ){
+return; //HER
 
             //Check if map has been added to a MapSync-object
             if (map.options && map.options.mapSync && map._mapSync == this){
@@ -819,11 +699,12 @@ ANIMATION   NO_ANIMATION    NO_ANIMATION_RESET      NO          NO              
                 map.options.mapSync.maxZoomOriginal = map.getMaxZoom();
 
                 //Set the maps min- and max-zoom
-                map.setView(this.mainMap.getCenter(), this.mainMap.getZoom() + map.options.mapSync.zoomOffset, NO_ANIMATION_RESET );
+//HER                map.setView(this.mainMap.getCenter(), this.mainMap.getZoom() + map.options.mapSync.zoomOffset, NO_ANIMATION_RESET );
                 map._mapSync_adjustMinMaxZoom();
 
                 map.options.mapSync.$map_container.addClass( 'map-sync-enabled' );
                 map.options.mapSync.enabled = true;
+/*
                 //If the cursor is over an enabled map => fire a mouseover to update the other maps
                 this._forEachMap({
                     mapFunction: function( map ) {
@@ -834,7 +715,7 @@ ANIMATION   NO_ANIMATION    NO_ANIMATION_RESET      NO          NO              
 
 
                 this._showOnFirstMove();
-
+*/
                 map.fire("mapsyncenabled");
             }
         },
@@ -872,7 +753,7 @@ ANIMATION   NO_ANIMATION    NO_ANIMATION_RESET      NO          NO              
                 map.options.mapSync.zoomEnabled = true;
                 if (map.options.mapSync.enabled)
                     //Adjust zoom (center is already in sync)
-                    map.setView(map.getCenter(), this.mainMap.getZoom() + map.options.mapSync.zoomOffset, NO_ANIMATION_RESET );
+                    map.setView(map.getCenter(), this.mainMap.getZoom() + map.options.mapSync.zoomOffset); //HER, NO_ANIMATION_RESET );
 
                 map.fire("mapsynczoomenabled");
             }
@@ -895,7 +776,7 @@ ANIMATION   NO_ANIMATION    NO_ANIMATION_RESET      NO          NO              
                 map._mapSync_adjustMinMaxZoom();
 
                 if (map.options.mapSync.enabled && map.options.mapSync.zoomEnabled)
-                    map.setView(this.mainMap.getCenter(), this.mainMap.getZoom() + map.options.mapSync.zoomOffset, NO_ANIMATION_RESET );
+                    map.setView(this.mainMap.getCenter(), this.mainMap.getZoom() + map.options.mapSync.zoomOffset);//HER, NO_ANIMATION_RESET );
 
                 map.fire("mapsynczoomoffsetchanged");
             }
@@ -919,37 +800,30 @@ ANIMATION   NO_ANIMATION    NO_ANIMATION_RESET      NO          NO              
                     mapFunction( i, this.list[i] );
         },
 
-        /**************************************************************************
-        _forEachMap( options )
-        options =
-            function(map) OR
-            {mapFunction: function(map, arg), arguments: [], excludeMap: leaflet-map, inclDisabled: boolean } )
-        **************************************************************************/
+        //**************************************************************************
+        //_forEachMap( {mapFunction: function(map, arg), arguments: [], excludeMap: leaflet-map, inclDisabled: boolean } )
         _forEachMap: function( options ){
             var i, nextMap, nextArg;
-            if ($.isFunction(options))
-                $.each(this.list, function(index, nextMap){ options(nextMap); });
-            else
-                for (i=0; i<this.list.length; i++ ){
-                    nextMap = this.list[i];
-                    if ((nextMap != options.excludeMap) && (options.inclDisabled || nextMap.options.mapSync.enabled)){
-                        nextArg = [nextMap];
-                        options.mapFunction.apply(undefined, nextArg.concat(options.arguments || []) );
-                    }
+            for (i=0; i<this.list.length; i++ ){
+                nextMap = this.list[i];
+                if ((nextMap != options.excludeMap) && (options.inclDisabled || nextMap.options.mapSync.enabled)){
+                    nextArg = [nextMap];
+                    options.mapFunction.apply(undefined, nextArg.concat(options.arguments || []) );
                 }
+            }
         },
 
-        //**************************************************************************
-        //_updateMaps - Update the center and zoom for all enabled maps to be equal mainMap
-        _updateMaps: function(){
-            this.mainMap.setView( this.mainMap.getCenter(), this.mainMap.getZoom() );
-        },
+//HER        //**************************************************************************
+//HER        //_updateMaps - Update the center and zoom for all enabled maps to be equal mainMap
+//HER        _updateMaps: function(){
+//HER            this.mainMap.setView( this.mainMap.getCenter(), this.mainMap.getZoom() );
+//HER        },
 
         //**************************************************************************
         //_updateShadowMaps - set dimentions, color and display for all 'shadow' maps
         // activeMap = the map being dragged
         _updateShadowMaps: function( activeMap ){
-
+return; //HER
             //Clean up: Hide all shadow-maps
             this._hideShadowMaps();
 
@@ -1011,17 +885,17 @@ ANIMATION   NO_ANIMATION    NO_ANIMATION_RESET      NO          NO              
         },
 
 
-        //**************************************************************************
-        //_updateCursor - Update the latlng-position of all the shadow-cursors
-        _updateCursor: function( latlng ){
-            this._forEachMap({
-                mapFunction : function( map, latlng ) {
-                    map.options.mapSync.cursorMarker.setLatLng( latlng );
-                },
-                arguments   : [latlng],
-                inclDisabled: true
-            });
-        },
+//HER        //**************************************************************************
+//HER        //_updateCursor - Update the latlng-position of all the shadow-cursors
+//HER        _updateCursor: function( latlng ){
+//HER            this._forEachMap({
+//HER                mapFunction : function( map, latlng ) {
+//HER                    map.options.mapSync.cursorMarker.setLatLng( latlng );
+//HER                },
+//HER                arguments   : [latlng],
+//HER                inclDisabled: true
+//HER            });
+//HER        },
 
         //**************************************************************************
         //_showOnFirstMove - call this.show() the first time the mouse is moved on one of the maps
