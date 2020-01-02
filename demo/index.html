@@ -92,11 +92,17 @@
 	<div style="float:left;width:100%">
 		<button id="enableMap3">Enable right map</button>
 		<button id="disableMap3">Disable right map</button>
-		<button id="enableZoomMap3">Enable right map zoom sync</button>
-		<button id="disableZoomMap3">Disable right map zoom sync</button>
+		<!-- <button id="enableZoomMap3">Enable right map zoom sync</button> -->
+		<!-- <button id="disableZoomMap3">Disable right map zoom sync</button> -->
 		<button id="zoomOffsetPlus2Map3">Set right map zoom offset = +2</button>
 		<button id="zoomOffsetMinus2Map3">Set right map zoom offset = -2</button>
-	</div>
+
+        <button id="enableShadowCursor">Enable shadow cursor</button>
+        <button id="disableShadowCursor">Disable shadow cursor</button>
+
+        <button id="enableOutline">Enable outline</button>
+        <button id="disableOutline">Disable outline</button>
+    </div>
 <!--
 	<div style="float:left;width:100%">
         <div class="cursor-div" style="cursor:default">default</div>
@@ -139,12 +145,19 @@
  -->
 
     <script src="bower_components.js"></script>
+	<script src="../src/leaflet-map-sync-map.js"></script>
+	<script src="../src/leaflet-map-sync-outline.js"></script>
+	<script src="../src/leaflet-map-sync-cursor.js"></script>
 	<script src="../src/leaflet-map-sync.js"></script>
 
 	<script>
         L.Icon.Default.imagePath = '\images';
 
-		var mapSync     = new L.MapSync();
+		var mapSync= new L.MapSync({
+                showOutline     : true,
+                showShadowCursor: true
+            });
+
         var map1zoom    = 7,
             map1minzoom = 4,
             map1maxzoom = 12,
@@ -160,10 +173,11 @@
         var map1 = mapSync.add(L.map('map', {attributionControl: false, minZoom: map1minzoom, maxZoom:map1maxzoom} ).setView([51.505, -0.09], map1zoom));
 
         //*************************************************************
-		mapSync.add(L.map('map2', {attributionControl: false}), {zoomOffset: +2 });
+		var map2 = L.map('map2', {attributionControl: false, minZoom: map1minzoom, maxZoom:map1maxzoom});
+		mapSync.add(map2, {zoomOffset: +2 });
 
         //*************************************************************
-		var map3 = mapSync.add(L.map('map3', {/*worldCopyJump: true, */attributionControl: false}), {zoomOffset: -2});
+        var map3 = mapSync.add(L.map('map3', {attributionControl: false, minZoom: map1minzoom, maxZoom:map1maxzoom}), {zoomOffset: -2});
         $('#enableMap3').click( function(){ mapSync.enable( map3 ); });
 		$('#disableMap3').click( function(){ mapSync.disable( map3 ); });
 
@@ -173,11 +187,18 @@
         $('#zoomOffsetPlus2Map3').click( function(){ mapSync.setZoomOffset( map3, +2 ); });
         $('#zoomOffsetMinus2Map3').click( function(){ mapSync.setZoomOffset( map3, -2 ); });
 
+        $('#enableShadowCursor').click( function(){ mapSync.enableShadowCursor(); });
+        $('#disableShadowCursor').click( function(){ mapSync.disableShadowCursor(); });
+
+        $('#enableOutline').click( function(){ mapSync.enableOutline(); });
+        $('#disableOutline').click( function(){ mapSync.disableOutline(); });
+
+
 
         //*************************************************************
 		mapSync.add(L.map('map4', {worldCopyJump: true, attributionControl: false}), {zoomOffset: 1 });
 		mapSync.add(L.map('map5', {worldCopyJump: true, attributionControl: false}), {zoomOffset: 1 });
-		mapSync.add(L.map('map6', {worldCopyJump: true, attributionControl: false}), {zoomOffset: 1 });
+        mapSync.add(L.map('map6', {worldCopyJump: true, attributionControl: false}), {zoomOffset: 1 });
 
 
         //*************************************************************
@@ -190,10 +211,12 @@
             }).addTo(map);
             map.setView([51.505, -0.09], map1zoom);
 
+
             L.circle([51.505, -0.09], 50000, {
 			    color: 'red',
 			    fillColor: '#f03',
-			    fillOpacity: 0.5
+			    fillOpacity: 0.5,
+                weight: 10
 		    }).addTo(map).bindPopup("I am a circle.");
 
             L.polygon([
@@ -205,6 +228,7 @@
 
             var crossMarker = $('<div class="cross-marker"><div><div/></div><div><div/></div></div>');
             $( map.getContainer() ).append( crossMarker );
+
 /*
 		    function openPopup( e ) {
 			    var popup = L.popup();

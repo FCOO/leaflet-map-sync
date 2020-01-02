@@ -1,0 +1,123 @@
+/***********************************************
+leaflet-map-sync-cursor
+************************************************/
+//Embedded icon-font from icomoon converted to embedded via fontello.com
+@font-face {
+  font-family: 'leaflet-map-sync';
+  src: url('./fonts/leaflet-map-sync.eot?90468428');
+  src: url('./fonts/leaflet-map-sync.eot?90468428#iefix') format('embedded-opentype'),
+       url('./fonts/leaflet-map-sync.woff?90468428') format('woff'),
+       url('./fonts/leaflet-map-sync.ttf?90468428') format('truetype'),
+       url('./fonts/leaflet-map-sync.svg?90468428#leaflet-map-sync') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+@include show-and-hide-for-modernizr-test(
+    $modernizr-test: 'leaflet-map-sync-cursor' ,
+    $incl-no-selector: false,
+    $incl-table-display: false
+);
+
+
+//The container for the shadow cursor
+.map-sync-cursor-container {
+    position: absolute;
+    top    : 0;
+    left   : 0;
+    z-index: 2000;
+}
+.map-sync-cursor-icon {
+    width   : 22px;
+    height  : 26px;
+    padding : 0;
+    z-index : 10000;
+    position: absolute;
+    display : none;
+    cursor  : inherit !important;
+
+    .map-sync-passive.map-sync-enabled & {
+        background-color: transparent !important;
+        display: block;
+
+        //Style for icon-hand and icon-brab where the icon is a background-image
+        background-size    : 16px 16px;
+        background-repeat  : no-repeat;
+        background-position: left top;
+        background-image   : none;
+
+        &.icon-grab {
+            Background-image: url('images/hand-gray-16x16.png');
+        }
+        &.icon-grabbing {
+            Background-image: url('images/grab-gray-16x16.png');
+        }
+        &.icon-pointer {
+            background-size: 21px 26px;
+            Background-image: url('images/pointer-gray-21x26.png');
+        }
+        &.icon-col-resize {
+            background-size: 23px 17px;
+            background-image: url("images/col-resize.png")
+        }
+        &.icon-row-resize {
+            background-size: 17px 23px;
+            background-image: url("images/row-resize.png")
+        }
+        &.icon-text {
+            background-size: 9px 18px;
+            background-image: url("images/text.png")
+        }
+        &.icon-vertical-text {
+            background-size: 18px 9px;
+            background-image: url("images/vertical-text.png")
+        }
+
+        //For the rest of the icon-* the icon is a font-icon
+        font-family: "leaflet-map-sync";
+        font-size  : 18px;
+        color      : black;
+        text-align : center;
+
+        text-shadow:
+            -1px -1px 0 red,
+             1px -1px 0 red,
+            -1px 1px 0 red,
+             1px 1px 0 red;
+
+        font-style     : normal;
+        font-weight    : normal;
+        speak          : none;
+        display        : inline-block;
+        text-decoration: none;
+
+        text-align    : center;
+        font-variant  : normal;
+        text-transform: none;
+        line-height   : 19px;
+
+        &:before {
+            color      : #C3C3C3;
+            text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
+        }
+
+        $resize-font-size: 0.88em;
+        $zoom-font-size  : 0.75em;
+        &.icon-move:before        { content: '\e804';                               } /* .icon-move          */
+        &.icon-cell:before        { content: '\e805'; font-size: 0.70em;            } /* .icon-plus          */
+        &.icon-crosshair:before   { content: '\e806';                               } /* .icon-plus3         */
+        &.icon-wait:before        { content: '\e808';                               } /* .icon-spinner2      */
+        &.icon-zoom-in:before     { content: '\e809'; font-size: $zoom-font-size;   } /* .icon-zoom-in3      */
+        &.icon-zoom-out:before    { content: '\e80a'; font-size: $zoom-font-size;   } /* .icon-zoom-out3     */
+        &.icon-cursor:before      { content: '\e80b';                               } /* .icon-cursor22       */
+        &.icon-not-allowed:before { content: '\e80e'; font-size: 0.80em;            } /* .icon-blocked       */
+        &.icon-ns-resize:before   { content: '\e807';                               } /* .icon-arrow-resize8 */
+        &.icon-nw-resize:before   { content: '\e80f'; font-size: $resize-font-size; } /* .icon-arrow-resize6 */
+        &.icon-ew-resize:before   { content: '\e810';                               } /* .icon-arrow-resize7 */
+        &.icon-ne-resize:before   { content: '\e811'; font-size: $resize-font-size; } /* icon-arrow-resize5  */
+        &.icon-none:before        { content: '';                                    } /*                     */
+    }
+}
+
+

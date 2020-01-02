@@ -1,0 +1,83 @@
+/***********************************************
+leaflet-map-sync-outline
+************************************************/
+
+@include show-and-hide-for-modernizr-test(
+    $modernizr-test: 'leaflet-map-sync-outline' ,
+    $incl-no-selector: false,
+    $incl-table-display: false
+);
+
+
+
+//The extra class for the map-container
+.map-sync-container {
+    $secondBorderStyle: dotted;  //dashed
+    $zIndex           : 30000;
+
+    border: $map-outline-border-width solid transparent;
+    .leaflet-map-sync-outline &.map-sync-active-dragging {
+        border-color: $map-outline;
+    }
+
+    .leaflet-map-sync-outline &.map-sync-main-dragging   {
+        border-color: $main-map-outline;
+        border-style: $secondBorderStyle;
+    }
+    .leaflet-map-sync-outline &.map-sync-second-dragging {
+        border-color: $map-outline;
+        border-style: $secondBorderStyle;
+    }
+
+    //The outline of either the main or the active map
+    .map-sync-outline {
+        position: absolute;
+        left   : 0px;
+        top    : 0px;
+        right  : 0px;
+        bottom : 0px;
+        z-index: $zIndex + 2;
+
+        border: $map-outline-border-width solid $map-outline;
+        box-sizing: border-box;
+        display: none;
+        //inner div
+        > div {
+            width : 100%;
+            height: 100%;
+            background-color: $map-outline;
+            opacity: 0.2;
+        }
+
+        //Show the outline
+        &.map-sync-outline-show {
+            display: block;
+
+            transition-duration: 100ms; //Leaflet default for animation is 250ms
+            transition-timing-function: ease-out;
+
+        }
+
+        //Outline of main-map in active map
+        &.map-sync-outline-main {
+            z-index     : $zIndex + 1;
+            border-color: $main-map-outline;
+            border-style: $secondBorderStyle;
+            > div {
+                background-color: $main-map-outline;
+                opacity         : 0.1;
+            }
+        }
+
+        //Outline of other maps in active map
+        &.map-sync-outline-second {
+            z-index     : $zIndex;
+            border-color: $map-outline;
+            border-style: $secondBorderStyle;
+            > div {
+                background-color: $map-outline;
+                opacity         : 0.1;
+            }
+        }
+    }
+}

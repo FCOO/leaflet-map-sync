@@ -21,10 +21,14 @@ Based on the great [Leaflet.Sync](https://github.com/turban/Leaflet.Sync) by [Bj
 http://FCOO.github.io/leaflet-map-sync/demo/ 
 
 ## Usage
-	var mapSync = new L.MapSync();
+	var mapSync = new L.MapSync({
+            showOutline     : true, //or false
+            showShadowCursor: true  //or false
+
+        });
 	mapSync.add(map);
 	mapSync.add(map2, {zoomoffset: +2 });
-	mapSync.add(map3, {zoomOffset: -2, zoomEnabled: false });
+	mapSync.add(map3, {zoomOffset: -2 /*TODO, zoomEnabled: false*/ });
 
 ### Methods
 
@@ -36,13 +40,18 @@ http://FCOO.github.io/leaflet-map-sync/demo/
 	MapSync.enable( map );	//Enables the map to the sync
 	MapSync.disable( map );	//Disables the map from the sync
 
-	MapSync.enableZoom( map );	//Enables the map to the sync
-	MapSync.disableZoom( map );	//Disables the map from the sync
+	//TODO: MapSync.enableZoom( map );	//Enables the map to the sync
+	//TODO: MapSync.disableZoom( map );	//Disables the map from the sync
 
     MapSync.setZoomOffset( map, zoomOffset ); //Change the offset in zoom between map and the main map
 
-	MapSync.show(): //Show the shadow-cursor
-	MapSync.hide(): //Hide the shadow-cursor
+	MapSync.enableShadowCursor(on); //Show the shadow-cursor
+	MapSync.disableShadowCursor();  //Hide the shadow-cursor
+
+	MapSync.enableOutline(on); //Show the outline of the other maps when dragging a map
+	MapSync.disableOutline();  //Hide the outline of the other maps when dragging a map
+        
+
 
 ### `options`
 | Option | Type | Default | Description |
