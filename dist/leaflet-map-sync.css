@@ -26,12 +26,6 @@ leaflet-map-sync-cursor
 .no-leaflet-map-sync-cursor .show-for-leaflet-map-sync-cursor {
   display: none !important; }
 
-.map-sync-cursor-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 2000; }
-
 .map-sync-cursor-icon {
   width: 22px;
   height: 26px;
@@ -39,95 +33,94 @@ leaflet-map-sync-cursor
   z-index: 10000;
   position: absolute;
   display: none;
-  cursor: inherit !important; }
-  .map-sync-passive.map-sync-enabled .map-sync-cursor-icon {
+  cursor: inherit !important;
+  background-size: 16px 16px;
+  background-repeat: no-repeat;
+  background-position: left top;
+  background-image: none;
+  font-family: "leaflet-map-sync";
+  font-size: 18px;
+  color: black;
+  text-align: center;
+  text-shadow: -1px -1px 0 red, 1px -1px 0 red, -1px 1px 0 red, 1px 1px 0 red;
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+  text-decoration: none;
+  text-align: center;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 19px;
+  /* .icon-move          */
+  /* .icon-plus          */
+  /* .icon-plus3         */
+  /* .icon-spinner2      */
+  /* .icon-zoom-in3      */
+  /* .icon-zoom-out3     */
+  /* .icon-cursor22       */
+  /* .icon-blocked       */
+  /* .icon-arrow-resize8 */
+  /* .icon-arrow-resize6 */
+  /* .icon-arrow-resize7 */
+  /* icon-arrow-resize5  */
+  /*                     */ }
+  .map-sync-passive .map-sync-cursor-icon {
     background-color: transparent !important;
-    display: block;
-    background-size: 16px 16px;
-    background-repeat: no-repeat;
-    background-position: left top;
-    background-image: none;
-    font-family: "leaflet-map-sync";
-    font-size: 18px;
-    color: black;
-    text-align: center;
-    text-shadow: -1px -1px 0 red, 1px -1px 0 red, -1px 1px 0 red, 1px 1px 0 red;
-    font-style: normal;
-    font-weight: normal;
-    speak: none;
-    display: inline-block;
-    text-decoration: none;
-    text-align: center;
-    font-variant: normal;
-    text-transform: none;
-    line-height: 19px;
-    /* .icon-move          */
-    /* .icon-plus          */
-    /* .icon-plus3         */
-    /* .icon-spinner2      */
-    /* .icon-zoom-in3      */
-    /* .icon-zoom-out3     */
-    /* .icon-cursor22       */
-    /* .icon-blocked       */
-    /* .icon-arrow-resize8 */
-    /* .icon-arrow-resize6 */
-    /* .icon-arrow-resize7 */
-    /* icon-arrow-resize5  */
-    /*                     */ }
-    .map-sync-passive.map-sync-enabled .map-sync-cursor-icon.icon-grab {
-      Background-image: url("images/hand-gray-16x16.png"); }
-    .map-sync-passive.map-sync-enabled .map-sync-cursor-icon.icon-grabbing {
-      Background-image: url("images/grab-gray-16x16.png"); }
-    .map-sync-passive.map-sync-enabled .map-sync-cursor-icon.icon-pointer {
-      background-size: 21px 26px;
-      Background-image: url("images/pointer-gray-21x26.png"); }
-    .map-sync-passive.map-sync-enabled .map-sync-cursor-icon.icon-col-resize {
-      background-size: 23px 17px;
-      background-image: url("images/col-resize.png"); }
-    .map-sync-passive.map-sync-enabled .map-sync-cursor-icon.icon-row-resize {
-      background-size: 17px 23px;
-      background-image: url("images/row-resize.png"); }
-    .map-sync-passive.map-sync-enabled .map-sync-cursor-icon.icon-text {
-      background-size: 9px 18px;
-      background-image: url("images/text.png"); }
-    .map-sync-passive.map-sync-enabled .map-sync-cursor-icon.icon-vertical-text {
-      background-size: 18px 9px;
-      background-image: url("images/vertical-text.png"); }
-    .map-sync-passive.map-sync-enabled .map-sync-cursor-icon:before {
-      color: #C3C3C3;
-      text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; }
-    .map-sync-passive.map-sync-enabled .map-sync-cursor-icon.icon-move:before {
-      content: '\e804'; }
-    .map-sync-passive.map-sync-enabled .map-sync-cursor-icon.icon-cell:before {
-      content: '\e805';
-      font-size: 0.70em; }
-    .map-sync-passive.map-sync-enabled .map-sync-cursor-icon.icon-crosshair:before {
-      content: '\e806'; }
-    .map-sync-passive.map-sync-enabled .map-sync-cursor-icon.icon-wait:before {
-      content: '\e808'; }
-    .map-sync-passive.map-sync-enabled .map-sync-cursor-icon.icon-zoom-in:before {
-      content: '\e809';
-      font-size: 0.75em; }
-    .map-sync-passive.map-sync-enabled .map-sync-cursor-icon.icon-zoom-out:before {
-      content: '\e80a';
-      font-size: 0.75em; }
-    .map-sync-passive.map-sync-enabled .map-sync-cursor-icon.icon-cursor:before {
-      content: '\e80b'; }
-    .map-sync-passive.map-sync-enabled .map-sync-cursor-icon.icon-not-allowed:before {
-      content: '\e80e';
-      font-size: 0.80em; }
-    .map-sync-passive.map-sync-enabled .map-sync-cursor-icon.icon-ns-resize:before {
-      content: '\e807'; }
-    .map-sync-passive.map-sync-enabled .map-sync-cursor-icon.icon-nw-resize:before {
-      content: '\e80f';
-      font-size: 0.88em; }
-    .map-sync-passive.map-sync-enabled .map-sync-cursor-icon.icon-ew-resize:before {
-      content: '\e810'; }
-    .map-sync-passive.map-sync-enabled .map-sync-cursor-icon.icon-ne-resize:before {
-      content: '\e811';
-      font-size: 0.88em; }
-    .map-sync-passive.map-sync-enabled .map-sync-cursor-icon.icon-none:before {
-      content: ''; }
+    display: inline-block; }
+  .map-sync-cursor-icon.icon-grab {
+    Background-image: url("images/hand-gray-16x16.png"); }
+  .map-sync-cursor-icon.icon-grabbing {
+    Background-image: url("images/grab-gray-16x16.png"); }
+  .map-sync-cursor-icon.icon-pointer {
+    background-size: 21px 26px;
+    Background-image: url("images/pointer-gray-21x26.png"); }
+  .map-sync-cursor-icon.icon-col-resize {
+    background-size: 23px 17px;
+    background-image: url("images/col-resize.png"); }
+  .map-sync-cursor-icon.icon-row-resize {
+    background-size: 17px 23px;
+    background-image: url("images/row-resize.png"); }
+  .map-sync-cursor-icon.icon-text {
+    background-size: 9px 18px;
+    background-image: url("images/text.png"); }
+  .map-sync-cursor-icon.icon-vertical-text {
+    background-size: 18px 9px;
+    background-image: url("images/vertical-text.png"); }
+  .map-sync-cursor-icon:before {
+    color: #C3C3C3;
+    text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; }
+  .map-sync-cursor-icon.icon-move:before {
+    content: '\e804'; }
+  .map-sync-cursor-icon.icon-cell:before {
+    content: '\e805';
+    font-size: 0.70em; }
+  .map-sync-cursor-icon.icon-crosshair:before {
+    content: '\e806'; }
+  .map-sync-cursor-icon.icon-wait:before {
+    content: '\e808'; }
+  .map-sync-cursor-icon.icon-zoom-in:before {
+    content: '\e809';
+    font-size: 0.75em; }
+  .map-sync-cursor-icon.icon-zoom-out:before {
+    content: '\e80a';
+    font-size: 0.75em; }
+  .map-sync-cursor-icon.icon-cursor:before {
+    content: '\e80b'; }
+  .map-sync-cursor-icon.icon-not-allowed:before {
+    content: '\e80e';
+    font-size: 0.80em; }
+  .map-sync-cursor-icon.icon-ns-resize:before {
+    content: '\e807'; }
+  .map-sync-cursor-icon.icon-nw-resize:before {
+    content: '\e80f';
+    font-size: 0.88em; }
+  .map-sync-cursor-icon.icon-ew-resize:before {
+    content: '\e810'; }
+  .map-sync-cursor-icon.icon-ne-resize:before {
+    content: '\e811';
+    font-size: 0.88em; }
+  .map-sync-cursor-icon.icon-none:before {
+    content: ''; }
 
 /***********************************************
 leaflet-map-sync-outline-color
@@ -142,46 +135,88 @@ leaflet-map-sync-outline
 .no-leaflet-map-sync-outline .show-for-leaflet-map-sync-outline {
   display: none !important; }
 
+/*
+A map will have one of four state
+1: Main    = The first map added to MapSync. Can not be disabled. Its outline color is $main-map-outline ("blue")
+2: Normal  = The not-first map added to MapSync and enabled. Its outline color is $map-outline ("yellow")
+3: Visible = Disabled when MapSync.options.inclDisabled = true => Not sync but it outline are show in other maps and visa versa. Its outline is color $visible-map-outline ("gray")
+4: Hidden  = Disabled when MapSync.options.inclDisabled = false => No outline is displayed
+
+When a map is being dragged all maps with start 1-3 get a border in the same color as the outline
+The map being dragged is the 'active' map and the map and it outlines get a full border
+All other maps and there outlins get a dotted border
+
+html.[no-]leaflet-map-sync-outline.[no-]leaflet-map-sync-dragging
+    .map-container.map-sync-container(.map-sync-main | .map-sync-normal | .map-sync-visible | .map-sync-hidden)[map-sync-dragging][map-sync-outline]
+        div.map-sync-outline(.map-sync-main | .map-sync-normal | .map-sync-visible)[.map-sync-outline-show]
+*/
 .map-sync-container {
-  border: 2px solid transparent; }
-  .leaflet-map-sync-outline .map-sync-container.map-sync-active-dragging {
+  /****************************************************
+    MAP-CONTAINER
+    *****************************************************/
+  border: 2px dotted transparent;
+  /****************************************************
+    OUTLINE
+    *****************************************************/ }
+  .leaflet-map-sync-outline.leaflet-map-sync-dragging .map-sync-container.map-sync-outline.map-sync-main {
+    border-color: #3216B0; }
+  .leaflet-map-sync-outline.leaflet-map-sync-dragging .map-sync-container.map-sync-outline.map-sync-normal {
     border-color: #ff7800; }
-  .leaflet-map-sync-outline .map-sync-container.map-sync-main-dragging {
-    border-color: #3216B0;
-    border-style: dotted; }
-  .leaflet-map-sync-outline .map-sync-container.map-sync-second-dragging {
-    border-color: #ff7800;
-    border-style: dotted; }
-  .map-sync-container .map-sync-outline {
+  .leaflet-map-sync-outline.leaflet-map-sync-dragging .map-sync-container.map-sync-outline.map-sync-visible {
+    border-color: #808080; }
+  .leaflet-map-sync-outline.leaflet-map-sync-dragging .map-sync-container.map-sync-outline.map-sync-hidden {
+    border-color: transparent; }
+  .leaflet-map-sync-outline.leaflet-map-sync-dragging .map-sync-container.map-sync-outline.map-sync-dragging {
+    border-style: solid; }
+  .map-sync-container div.map-sync-outline {
     position: absolute;
     left: 0px;
     top: 0px;
     right: 0px;
     bottom: 0px;
-    z-index: 30002;
-    border: 2px solid #ff7800;
     box-sizing: border-box;
-    display: none; }
-    .map-sync-container .map-sync-outline > div {
+    display: none;
+    border: 2px dotted #ff7800; }
+    .map-sync-container div.map-sync-outline > div {
       width: 100%;
       height: 100%;
       background-color: #ff7800;
       opacity: 0.2; }
-    .map-sync-container .map-sync-outline.map-sync-outline-show {
-      display: block;
-      transition-duration: 100ms;
-      transition-timing-function: ease-out; }
-    .map-sync-container .map-sync-outline.map-sync-outline-main {
-      z-index: 30001;
-      border-color: #3216B0;
-      border-style: dotted; }
-      .map-sync-container .map-sync-outline.map-sync-outline-main > div {
-        background-color: #3216B0;
-        opacity: 0.1; }
-    .map-sync-container .map-sync-outline.map-sync-outline-second {
-      z-index: 30000;
-      border-color: #ff7800;
-      border-style: dotted; }
-      .map-sync-container .map-sync-outline.map-sync-outline-second > div {
-        background-color: #ff7800;
-        opacity: 0.1; }
+  .map-sync-container path.map-sync-outline {
+    display: none;
+    stroke-width: 2px;
+    stroke: #ff7800;
+    fill: #ff7800;
+    stroke-dasharray: 0 4;
+    fill-opacity: 0.2; }
+  .map-sync-container div.map-sync-outline.map-sync-outline-show {
+    display: block;
+    transition-duration: 100ms;
+    transition-timing-function: ease-out; }
+  .map-sync-container path.map-sync-outline.map-sync-outline-show {
+    display: block; }
+  .map-sync-container div.map-sync-outline.map-sync-outline-dragging {
+    border-style: solid; }
+  .map-sync-container path.map-sync-outline.map-sync-outline-dragging {
+    stroke-dasharray: none; }
+  .map-sync-container div.map-sync-outline.map-sync-main {
+    border-color: #3216B0; }
+    .map-sync-container div.map-sync-outline.map-sync-main > div {
+      background-color: #3216B0; }
+  .map-sync-container path.map-sync-outline.map-sync-main {
+    stroke: #3216B0;
+    fill: #3216B0; }
+  .map-sync-container div.map-sync-outline.map-sync-normal {
+    border-color: #ff7800; }
+    .map-sync-container div.map-sync-outline.map-sync-normal > div {
+      background-color: #ff7800; }
+  .map-sync-container path.map-sync-outline.map-sync-normal {
+    stroke: #ff7800;
+    fill: #ff7800; }
+  .map-sync-container div.map-sync-outline.map-sync-visible {
+    border-color: #808080; }
+    .map-sync-container div.map-sync-outline.map-sync-visible > div {
+      background-color: #808080; }
+  .map-sync-container path.map-sync-outline.map-sync-visible {
+    stroke: #808080;
+    fill: #808080; }

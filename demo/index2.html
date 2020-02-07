@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html style="height:100%; width:100%; margin:0; padding:0">
+<head>
+	<title>fcoo.dk - leaflet-map-sync - Demo</title>
+	<meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta http-equiv='x-dns-prefetch-control' content='on'>
+
+	<meta name='copyright' content='FCOO'>
+	<meta name='owner' content='FCOO'>
+
+  <link  href="bower_components.css" rel="stylesheet">
+  <link  href="../src/leaflet-map-sync.css" rel="stylesheet">
+	<style>
+        .container {
+            display: flex;
+            justify-content: space-between;
+            widrh: 100%; height: 90%;
+        }
+        #map {
+            width: 49%;
+            height: 100%;
+        }
+        #map2 {
+            width: 48%;
+            height: 99%;
+        }
+
+
+    </style>
+</head>
+
+<body style="height:100%; width:100%; margin:0; padding:0">
+    <div class="container">
+        <div id="map"></div>
+        <div id="map2"></div>
+    </div>
+    <script src="bower_components.js"></script>
+	<script src="../src/leaflet-map-sync-map.js"></script>
+	<script src="../src/leaflet-map-sync-outline.js"></script>
+	<script src="../src/leaflet-map-sync-cursor.js"></script>
+	<script src="../src/leaflet-map-sync.js"></script>
+
+	<script>
+        L.Icon.Default.imagePath = '\images';
+
+		var mapSync= new L.MapSync({
+                showOutline     : true,
+                showShadowCursor: true
+            });
+
+        var map1zoom    = 7,
+            map1minzoom = 3,
+            map1maxzoom = 12,
+
+            globalTileSize = 256,
+
+            globalLayerUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+            //globalLayerUrl = 'http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png';
+            //globalLayerUrl = 'https://tiles04.fcoo.dk/tiles/tiles_bckgrnd_512_mercator_201508030000/{z}/{x}/{y}.png'; globalTileSize = 512;
+
+
+		//*************************************************************
+        var map1 = mapSync.add(L.map('map', {
+            attributionControl: false,
+            minZoom: map1minzoom,
+            maxZoom:map1maxzoom,
+            worldCopyJump: true, //true,
+            scrollWheelZoom      : true,
+
+        }).setView([51.505, -0.09], map1zoom));
+
+        //*************************************************************
+        var offset = 0;//-3;
+		var map2 = L.map('map2', {
+            attributionControl: false,
+            minZoom: map1minzoom + offset,
+            maxZoom:map1maxzoom + offset,
+            worldCopyJump: true, //true,
+            scrollWheelZoom      : true,
+        });
+		mapSync.add(map2, {zoomOffset: offset });
+
+        //*************************************************************
+
+        //*************************************************************
+        mapSync.forEachMap( function( index, map ){
+            L.tileLayer(globalLayerUrl, {
+//HER                tileSize: globalTileSize,
+//HER                minZoom : map1minzoom,
+//HER                maxZoom : map1maxzoom
+
+            }).addTo(map);
+            map.setView([51.505, -0.09], map1zoom);
+
+
+            L.circle([51.505, -0.09], 50000, {
+			    color: 'red',
+			    fillColor: '#f03',
+			    fillOpacity: 0.5,
+                weight: 10
+		    }).addTo(map).bindPopup("I am a circle.");
+
+            L.polygon([
+			    [51.505, -0.09],
+			    [51.505, 2.06],
+			    [52.51,  -0.09]
+		    ], {color: 'green'}).addTo(map).bindPopup("I am polygon at map "+index);
+
+
+/*
+		    function openPopup( e ) {
+			    var popup = L.popup();
+			    popup
+				    .setLatLng(e.latlng)
+				    .setContent('You clicked the map at <br>' + e.latlng.toString()+'<br><button id="enableMap'+index+'">Enable #'+index+'</button><button id="disableMap'+index+'">Disable #'+index+'</button>')
+				    .openOn(map);
+			$('#enableMap'+index).click( function(){ mapSync.enable( map ); });
+			$('#disableMap'+index).click( function(){ mapSync.disable( map ); });
+
+		}
+		map.on('click', openPopup );
+*/
+
+        });
+	</script>
+</body>
+</html>

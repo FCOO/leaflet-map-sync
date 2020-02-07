@@ -79,11 +79,8 @@
                         map       = this._map,
                         mapSync   = map._mapSync;
 
-                    if (
-                        mapSync && mapSync.options.showShadowCursor &&
-                        map.options.mapSync && map.options.mapSync.enabled &&
-                        ((key in this._panKeys) || (key in this._zoomKeys))
-                    ){
+                    if ( map._mapSync_showShadowCursor() &&
+                         ((key in this._panKeys) || (key in this._zoomKeys)) ){
                         //It is a pan or zoom key on a enabled map and there are shadow-cursors => hide shadow-cursor and show them again in 1000ms if no key is pressed before
                         if (mapSync.timeoutId)
                             window.clearTimeout(mapSync.timeoutId);
@@ -106,19 +103,22 @@
     function map_on_XX_cursor(){
     ********************************************************************/
     function map_whenReady_cursor(){
-        //Create a marker to be used as 'shadow' cursor and move it to a popupPane to make the cursor apear over the popups
-        var divIcon = L.divIcon({ className: 'map-sync-cursor-icon', iconSize: ns.iconSize });
-        this.options.mapSync.cursorMarker = L.marker( this.getCenter(), {icon: divIcon} ).addTo(this);
+        //Create a marker to be used as 'shadow' cursor
+        this.options.mapSync.cursorMarker =
+            L.marker(this.getCenter(), {
+                icon: L.divIcon({
+                    className : 'map-sync-cursor-icon',
+                    iconSize  : ns.iconSize,
+                }),
+                pane: this.maySyncPaneCursor
+            });
 
-        //Create a new pane above everything and move the shadow-cursor from markerPane to this pane
-        var cursorContainer = L.DomUtil.create( 'div', 'show-for-leaflet-map-sync-cursor map-sync-cursor-container', this._mapPane );
-        this._panes.markerPane.removeChild( this.options.mapSync.cursorMarker._icon );
-        cursorContainer.appendChild( this.options.mapSync.cursorMarker._icon );
+        this.options.mapSync.cursorMarker.addTo(this);
     }
 
     function map_on_zoomstart_cursor(){
         var mapSync = this._mapSync;
-        if (mapSync && mapSync.options.showShadowCursor && this.options.mapSync && this.options.mapSync.enabled && !mapSync.mapWithFirstZoomstart){
+        if (this._mapSync_showShadowCursor() && !mapSync.mapWithFirstZoomstart){
             mapSync.mapWithFirstZoomstart = this;
             mapSync.disableShadowCursor();
         }
@@ -143,12 +143,12 @@
 
     function map_on_mousemove_cursor( mouseEvent ){
         //Update the position of the shadow-cursor
-        if (this._mapSync && this.options.mapSync.enabled)
+        if (this._mapSyncOptions(null, true))
             this._mapSync._updateCursor( mouseEvent.latlng );
     }
 
     function map_setCursorFromMouseEvent( mouseEvent ){
-        if (this._mapSync && this.options.mapSync.enabled)
+        if (this._mapSyncOptions(null, true))
             this._mapSync._setCursorFromMouseEvent( mouseEvent );
     }
 
@@ -169,7 +169,7 @@
             mapSync.timeoutId = window.setTimeout( $.proxy(map_showShadowCursorAgain, this), 500);
         }
 
-        if (mapSync && this.options.mapSync.enabled)
+        if (this._mapSyncOptions(null, true))
             mapSync._setCursorFromElement( this._container );
     }
 
@@ -222,10 +222,13 @@
     "use strict";
 
     var NO_ANIMATION = {
-        animate: false,
-        reset  : true,
-        disableViewprereset: true
-    };
+            animate: false,
+            reset  : true,
+            disableViewprereset: true
+        },
+        maySyncPaneOutline = 'map-sync-outline',
+        maySyncPaneCursor  = 'map-sync-cursor',
+        mapSyncId          = 0;
 
     /***********************************************************
     Extentions for L.Map
@@ -235,26 +238,103 @@
         ------------------------ ----------------------------------------
         mapsyncenabled           MapSync.enable( map )
         mapsyncdisabled          MapSync.disable( map )
-  TODO: mapsynczoomenabled       MapSync.enableZoom( map )
-  TODO: mapsynczoomdisabled      MapSync.disableZoom( map )
         mapsynczoomoffsetchanged MapSync.setZoomOffset( map, zoomOffset )
 
     ***********************************************************/
     L.Map.include({
 
+        _addToMapSync: function( mapSync, options ){
+            this.$container = this.$container || $(this.getContainer());
+            this._mapSync = mapSync;
+            this._syncOffsetFns = {};
+            this.options = this.options || {};
+            this.options.mapSync = options;
+            this.options.mapSync.id = 'mapSync' + mapSyncId++;
+            this.$container.addClass('map-sync-container');
+
+            //Create a container to contain the outline of other maps as div
+            //z-index for div-outlines = just below controls
+            this.options.mapSync.zIndex = parseInt($(this._controlContainer).children().css('z-index')) - 20;
+
+            this.$mapSyncOutlineContainer = this.$mapSyncOutlineContainer ||
+                $('<div/>')
+                    .addClass('map-sync-outline-container show-for-leaflet-map-sync-outline')
+                    .appendTo( this.$container );
+
+            //Create pane to contain cursor and outline as rectangles for map.
+            if (!this.getPane(maySyncPaneOutline)){
+                this.createPane(maySyncPaneOutline);
+                this.maySyncPaneOutline = this.getPane(maySyncPaneOutline);
+                $(this.maySyncPaneOutline).addClass('show-for-leaflet-map-sync-outline');
+
+                this.createPane(maySyncPaneCursor);
+                this.maySyncPaneCursor = this.getPane(maySyncPaneCursor);
+                $(this.maySyncPaneCursor).addClass('show-for-leaflet-map-sync-cursor');
+
+                this.whenReady( function(){
+                    var zIndex = parseInt($(this.getPanes().popupPane).css('z-index'));
+                    //Shadow cursor is palced above popups
+                    $(this.maySyncPaneCursor).css('z-index', zIndex + 1 );
+                    //Outlines are placed below popups
+                    $(this.maySyncPaneOutline).css('z-index', zIndex - 1 );
+                }, this);
+            }
+        },
+
+
+        _mapSyncSetClass: function(){
+            var enabled      = this.options.mapSync.enabled,
+                isMainMap    = this.options.mapSync.isMainMap,
+                inclDisabled = this._mapSync.options.inclDisabled;
+            this.$container
+                .toggleClass('map-sync-main',    enabled &&  isMainMap)
+                .toggleClass('map-sync-normal',  enabled && !isMainMap)
+                .toggleClass('map-sync-visible', !enabled  &&  inclDisabled)
+                .toggleClass('map-sync-hidden',  !enabled  && !inclDisabled);
+        },
+
         /***********************************
-        _mapSync_allOtherMaps(mapFunction, arg)
+        _mapSyncOptions(optionsId, testSelfEnabled)
+        Return true if mapSync[optionsId] is true and
+        check for this.options.mapSync.enabled if testSelfEnabled == true
+        ***********************************/
+        _mapSyncOptions: function(optionsId, testSelfEnabled){
+            var mapSync = this._mapSync,
+                result = mapSync &&
+                         (!optionsId || mapSync.options[optionsId]);
+            if (result && testSelfEnabled)
+                result = mapSync.options.inclDisabled || (this.options.mapSync && this.options.mapSync.enabled);
+            return !!result;
+        },
+
+        /***********************************
+        _mapSync_showShadowCursor()
+        ***********************************/
+        _mapSync_showShadowCursor: function(){
+            return this._mapSyncOptions('showShadowCursor', true);
+        },
+
+        /***********************************
+        _mapSync_showOutline()
+        ***********************************/
+        _mapSync_showOutline: function(){
+            return this._mapSyncOptions('showOutline', true);
+        },
+
+        /***********************************
+        _mapSync_allOtherMaps(mapFunction, arg, allowDisabled)
         mapFunction = function(map, arg[0], arg[1],..., arg[N])
         Visit all the other enabled amps from this._mapSync and call
         mapFunction(map, arg[0], arg[1],..., arg[N])
         ***********************************/
-        _mapSync_allOtherMaps: function (mapFunction, arg){
-            if (this._mapSync && this.options.mapSync && this.options.mapSync.enabled)
+        _mapSync_allOtherMaps: function (mapFunction, arg, allowDisabled){
+            if (this._mapSync && this.options.mapSync && this.options.mapSync.enabled || allowDisabled)
                 this._mapSync._forEachMap({
-                    'mapFunction' : mapFunction,
-                    'arguments'   : arg,
-                    'excludeMap'  : this,
-                    'inclDisabled': false
+                    mapFunction  : mapFunction,
+                    arguments    : arg,
+                    excludeMap   : this,
+                    inclDisabled : false,
+                    allowDisabled: allowDisabled
                 });
         },
 
@@ -301,7 +381,7 @@
                 this.options.mapSync.minZoomOriginal = minZoom !== undefined ? minZoom : this.options.mapSync.minZoomOriginal;
                 this.options.mapSync.maxZoomOriginal = maxZoom !== undefined ? maxZoom : this.options.mapSync.maxZoomOriginal;
 
-                if (!this.options.mapSync.enabled/*TODO || this.options.mapSync.zoomEnabled*/){
+                if (!this.options.mapSync.enabled){
                     this.setMinZoom( this.options.mapSync.minZoomOriginal, true );
                     this.setMaxZoom( this.options.mapSync.maxZoomOriginal, true );
                 }
@@ -340,7 +420,6 @@
             // It is ugly to have state, but we need it in case of inertia.
             this._syncDragend = true;
         },
-
 
         /***********************************
         _tryAnimatedZoom
@@ -391,10 +470,10 @@
                 });
 
                 if (!sync && this._mapSync && this.options.mapSync.enabled) {
-                    var newMainZoom = zoom - this.options.mapSync.zoomOffset; //TODO var newMainZoom = this.options.mapSync.zoomEnabled ? zoom - this.options.mapSync.zoomOffset : null;
+                    var newMainZoom = zoom - this.options.mapSync.zoomOffset;
                     this._mapSync_allOtherMaps( function(otherMap) {
                         sandwich(otherMap, function (/*obj*/) {
-                            var newMapZoom = newMainZoom + otherMap.options.mapSync.zoomOffset; //TODO var newMapZoom = (newMainZoom !== null) && otherMap.options.mapSync.zoomEnabled ? newMainZoom + otherMap.options.mapSync.zoomOffset : otherMap.getZoom();
+                            var newMapZoom = newMainZoom + otherMap.options.mapSync.zoomOffset;
                             return otherMap.setView(center, newMapZoom, options, true );
                         });
                     });
@@ -495,153 +574,269 @@
     leaflet-map-sync-outline
 
     Creating and updating the outline of other maps
-
-
 ****************************************************************************/
 
-(function ($, L/*, window, document, undefined*/) {
+(function ($, L, window/*, document, undefined*/) {
     "use strict";
 
+    /**********************************************************
+    Outline reprecent a outline of one map in another map.
+    If mapSync.options.inclDisabled => create a rectangle to be used when a map is disabled
+    **********************************************************/
+
+    L.MapSync_outline = function(map, insideMap){
+        this.map   = map;
+        this.mapId = map.options.mapSync.id;
+
+        this.insideMap   = insideMap;
+        this.insideMapId = insideMap.options.mapSync.id;
+
+        this.mapSync = map._mapSync;
+
+        /*
+        Create the outline for this.map in this.insideMap
+        There are two versions:
+            div      : used when two maps are enabled => they have the same center and there outlines are div centered on the other map
+            rectangle: used when one or both the maps are disabled BUT inclDisabled is set in mapSync => They are rectangles with fixed positions
+        */
+        this.$div =
+            $('<div><div/></div>')
+                .addClass('map-sync-outline')
+                .css('z-index', this.map.options.mapSync.zIndex )
+                .appendTo( this.insideMap.$mapSyncOutlineContainer);
+
+        this.rectangle = null; //Created in update
+    };
+
+
+    L.MapSync_outline.prototype = {
+
+		/*************************************************
+        update - Update and show/hide the outline of this.map in this.insideMap
+        **************************************************/
+		update: function( mapIsActive ){
+            var _this           = this,
+                map             = this.map,
+                //mapId           = this.mapId,
+                mapBounds       = this.mapBounds = map.getBounds(),
+                insideMap       = this.insideMap,
+                //insideMapId     = this.insideMapId,
+                insideMapBounds = insideMap.getBounds(),
+                //maxMargin = 2% of lat-lng-range to avoid two maps almost same size to be outlined inside each other
+                maxMargin       = 2 * Math.max(
+                                          Math.abs( insideMapBounds.getWest() - insideMapBounds.getEast() ),
+                                          Math.abs( insideMapBounds.getSouth() - insideMapBounds.getNorth() )
+                                      ) / 100,
+                displayAsDiv    = this.displayAsDiv = (map.options.mapSync.enabled && insideMap.options.mapSync.enabled),
+                show            = false;
+
+
+            if (!displayAsDiv && !this.rectangle){
+                this.rectangle = L.rectangle(
+                    map.getBounds(), {
+                        pane     : insideMap.maySyncPaneOutline,
+                        className: 'map-sync-outline',
+                        noClip   : true
+                    });
+                this.rectangle.addTo( insideMap );
+            }
+
+
+            //Detect if the outline of map is visible in insideMap
+            if (displayAsDiv){
+                //Both map and insideMap is enabled => they have same center-position => check if map fits inside insideMap
+                show = !mapBounds.equals(insideMapBounds, maxMargin) && insideMapBounds.contains( mapBounds );
+                if (!show)
+                    //If map don't coner insideMap and map is zoomed out compared to outline map => show the outline
+                    show =  !mapBounds.contains( insideMapBounds ) && (map.getZoom() > insideMap.getZoom());
+            }
+            else
+                if (map._mapSync_showOutline() && insideMap._mapSync_showOutline()) {
+                    //Show if the outline of map inside insideMap is less that the container of insideMap
+                    //Scale the size of map's container to same zoom as insideMap and check if resized container of map is bigger that insideMap's container
+                    var zoomScale = map.getZoomScale( insideMap.getZoom(), map.getZoom());
+                    show = ( zoomScale*map.$container.height() < insideMap.$container.height() ) ||
+                           ( zoomScale*map.$container.width()  < insideMap.$container.width() );
+                }
+
+            if (show){
+                if (displayAsDiv){
+                    //Adjust outline-div
+                    var topLeft     = insideMap.latLngToContainerPoint( mapBounds.getNorthWest() ),
+                        bottomRight = insideMap.latLngToContainerPoint( mapBounds.getSouthEast() );
+                    this.$div.css({
+                        top   : topLeft.y,
+                        left  : topLeft.x,
+                        width : bottomRight.x - topLeft.x,
+                        height: bottomRight.y - topLeft.y
+                    });
+                }
+                else {
+                    this.rectangle.setBounds( mapBounds );
+                }
+            }
+
+            //Set class for outline map container to show/hide outline and border
+            this.$element = displayAsDiv ? this.$div : $(this.rectangle._path);
+            this.setShow(show);
+            this.$element.toggleClass('map-sync-outline-dragging', show && !!mapIsActive);
+
+            //Adjust the style-class to be equal that of the map
+            $.each(['map-sync-main', 'map-sync-normal', 'map-sync-visible'], function(index, className){
+                _this.$element.toggleClass(className, map.$container.hasClass(className));
+            });
+
+            return show;
+		},
+
+        setShow: function(show){
+            this.show = show;
+            this.$element.toggleClass('map-sync-outline-show', show);
+        }
+
+	};
+
+    /**********************************************************
+    Extend L.Map with methods for may-sync outlines
+    **********************************************************/
     L.Map.include({
 
-        /***********************************
+        /***************************************************
         _mapSync_update_outline
         Draw/updates the outlines of this in other maps and
         the outline of other maps in this.
-        If onlyInMap !== null only this' outline in onlyInMap are updated
-        ***********************************/
-        _mapSync_update_outline: function(){
+        *****************************************************/
+        _mapSync_update_outline: function( isActiveMap ){
             // The outline of mapA is shown in mapB if
             //    - mapB cover mapA, or
             //    - mapA and mapB overlaps AND mapA.zoom > mapB.zoom
+            var _this  = this,
+                thisId = this.options.mapSync.id;
 
-            //************************************************************************************
-            function setOutlineMap( map, outlineMap, $mapOutline, role ){
-                var outlineBounds = outlineMap.getBounds(),
-                    mapBounds    = map.getBounds(),
-                    showOutline   = false;
+            //Draw outline maps of this in all other maps
+            var outlineVisibleInOtherMaps = false;
+            $.each( _this.options.mapSync.outlineList, function( id, outline ){
+                outlineVisibleInOtherMaps = outline.update(isActiveMap) || outlineVisibleInOtherMaps;
+            });
+            if (outlineVisibleInOtherMaps)
+                this.$container.addClass('map-sync-outline');
 
-                if ( map.options.mapSync.enabled && outlineMap.options.mapSync.enabled && (outlineMap != map) && !outlineBounds.equals(mapBounds) ){
+            //Draw outline maps of all other maps in this
+            this._mapSync_allOtherMaps( function( otherMap ){
+                otherMap.$container
+                    .toggleClass(
+                        'map-sync-outline',
+                        otherMap.options.mapSync.outlineList[thisId].update(false)
+                    );
+            }, [], true);
 
-                    if (mapBounds.contains( outlineBounds ) )
-                        showOutline = true;
-                    else {
-                        //If Outline map don't coner map and map is zoomed out compared to outline map => show the outline
-                        showOutline = !outlineBounds.contains( mapBounds ) && (outlineMap.getZoom() > map.getZoom());
+
+            //Hide duplets outlines (if any) in the map
+            var visibleOutlines = [];
+            this._mapSync_allOtherMaps(function(otherMap){
+                var outline = otherMap.options.mapSync.outlineList[thisId];
+                if (outline.show)
+                    visibleOutlines.push(outline);
+            });
+            visibleOutlines.sort(function(outline1, outline2){ return (outline1.show?1:0) + (outline2.show?-1:0); });
+
+            for (var map1Index=1; map1Index < visibleOutlines.length; map1Index++){
+                var bounds1 = visibleOutlines[map1Index].mapBounds;
+                for (var map2Index=0; map2Index < map1Index; map2Index++)
+                    //if "map2" is the same as "map1" => hide "map1"
+                    if (bounds1.equals( visibleOutlines[map2Index].mapBounds )){
+                        visibleOutlines[map1Index].setShow(false);
+                        break;
                     }
-                    if (showOutline){
-                        //Adjust outline-div
-                        var topLeft     = map.latLngToContainerPoint( outlineBounds.getNorthWest() ),
-                            bottomRight = map.latLngToContainerPoint( outlineBounds.getSouthEast() );
-                        $mapOutline.css({
-                            top   : topLeft.y,
-                            left  : topLeft.x,
-                            width : bottomRight.x - topLeft.x,
-                            height: bottomRight.y - topLeft.y
-                         });
-                    }
-                }
-
-                //Set class for outline map container to show/hide outline and border
-                if ($mapOutline)
-                    $mapOutline
-                        .toggleClass('map-sync-outline-show',   showOutline)
-                        .toggleClass('map-sync-outline-main',   showOutline && (role == 'MAIN')   )
-                        .toggleClass('map-sync-outline-second', showOutline && (role == 'SECOND') );
-
-                return showOutline;
             }
-            //************************************************************************************
-
-            var _this = this;
-
-            //Draw 'yellow' outline maps of this in all other maps
-            $.each( this._mapSync.list, function( index, otherMap ){
-                var $mapOutline = _this.options.mapSync.outlineList[ index ]; // = the outline map of _this in otherMap
-                if ( setOutlineMap(  otherMap, _this, $mapOutline ) )
-                    _this.options.mapSync.$map_container.addClass('map-sync-active-dragging');
-            });
-
-            //Draw 'open yellow' (or 'blue' for main map) outline maps of all other maps in this
-            $.each( this._mapSync.list, function( index, otherMap ){
-                var thisIndexInList = _this.options.mapSync.indexInList,
-                    $mapOutline = otherMap.options.mapSync.outlineList[ thisIndexInList ], // = the outline map of otherMap in _this
-                    otherMapIsMain = _this._mapSync.mainMap == otherMap;
-
-                if ( setOutlineMap(  _this, otherMap, $mapOutline, otherMapIsMain ? 'MAIN' : 'SECOND' ) ){
-                    otherMap.options.mapSync.$map_container.addClass( otherMapIsMain ? 'map-sync-main-dragging' : 'map-sync-second-dragging');
-
-                    //Hide the outline map if there already is a exact copy
-                    for (var i=0; i<index; i++ )
-                        if (i != thisIndexInList){
-                            var $otherMapOutline = _this._mapSync.list[i].options.mapSync.outlineList[ thisIndexInList ];
-
-                            //If the two outlines $mapOutline and $otherMapOutline are equal => hide $mapOutline
-                            if (
-                                ( $mapOutline.css("left") == $otherMapOutline.css("left") ) &&
-                                ( $mapOutline.css("top") == $otherMapOutline.css("top") ) &&
-                                ( $mapOutline.css("width") == $otherMapOutline.css("width") ) &&
-                                ( $mapOutline.css("height") == $otherMapOutline.css("height") ) &&
-                                ( $mapOutline.attr("class") == $otherMapOutline.attr("class") )
-                               ){
-                                $mapOutline.removeClass('map-sync-outline-show');
-                                break;
-                            }
-                        }
-                }
-            });
-
         }, //end of _mapSync_update_outline
 
-        /***********************************
+        /***************************************************
         _mapSync_hide_outlines
-        Hide all outline maps in other maps and reset own border etc.
-        ***********************************/
+        Hide all outline of other maps and reset own border etc.
+        ***************************************************/
         _mapSync_hide_outlines: function(){
-            for (var i=0; i<this._mapSync.list.length; i++ ){
-                var $mapOutline = this.options.mapSync.outlineList[i]; // = the outline map of _this in otherMap
-                if ($mapOutline)
-                  $mapOutline.removeClass('map-sync-outline-show map-sync-outline-main map-sync-outline-second');
-            }
-            this.options.mapSync.$map_container.removeClass('map-sync-main-dragging map-sync-active-dragging map-sync-second-dragging' );
+            this.$container.find('.map-sync-outline-show').removeClass('map-sync-outline-show');
+            this.$container.removeClass('map-sync-dragging' );
         }
 
     }); //End of  L.Map.include({...
 
     //Show outline map
     function map_on_dragstart_outline(){
-        if (this._mapSync && this.options.mapSync.enabled){
-            this._mapSync._update_outlines( this );
+        var _this = this;
+
+        //Hide the shadow cursors in all maps while dragging
+        this._mapSync.options.save_showShadowCursor = this._mapSync.options.save_showShadowCursor || this._mapSync.options.showShadowCursor;
+        this._mapSync.disableShadowCursor();
+
+        if (this._mapSync_showOutline()){
+            this._mapSync_update_outline(true);
             this.options.mapSync.dragging = true;
+            this.$container.addClass('map-sync-dragging');
+            window.modernizrOn('leaflet-map-sync-dragging');
+            this.rectangleList = [];
+
+            //Create list of rectangles to be updated on drag = visible outlines of this in other maps as rectangles
+            this.rectangleList = [];
+            $.each(this.options.mapSync.outlineList, function(id, outline){
+                if (outline.show && !outline.displayAsDiv)
+                    _this.rectangleList.push(outline.rectangle);
+            });
+        }
+    }
+
+    //Only if inclDisabled: Update outline of disabled maps in this or this in other maps if this is disabled
+    function map_on_drag_outline(){
+        if (this.callDragstartOnNextDrag){
+            this.callDragstartOnNextDrag = false;
+            this.fire('dragstart');
+        }
+
+
+        if (this._mapSync_showOutline()){
+            var bounds = this.getBounds();
+            for(var i=0; i<this.rectangleList.length; i++)
+                this.rectangleList[i].setBounds(bounds);
         }
     }
 
     //Hide outlines map
     function map_on_dragend_outline(){
-        if (this._mapSync && this.options.mapSync.enabled){
-            this._mapSync._update_outlines( this );
+        this.callDragstartOnNextDrag = false;
+
+        //Show the shadow cursors in all maps after dragging
+        if (this._mapSync.options.save_showShadowCursor){
+            this._mapSync.enableShadowCursor();
+            this._mapSync.options.save_showShadowCursor = false;
+        }
+
+        if (this._mapSync_showOutline()){
             this._mapSync._hide_outlines();
             this.options.mapSync.dragging = false;
+            this.$container.removeClass('map-sync-dragging map-sync-outline');
+            window.modernizrOff('leaflet-map-sync-dragging');
+            this.rectangleList = [];
         }
     }
 
-    //Redraw outlines for all no-zoom-sync maps when zoom ends
+    //Redraw outlines for all disabled maps when zoom ends (and inclDisabled == true)
     function map_on_zoomend_outline(){
-        var _this = this;
-        if (this._mapSync && this.options.mapSync.dragging)
-            $.each( this._mapSync.list, function( index, otherMap ){
-                if (otherMap.options.mapSync.enabled && !otherMap.options.mapSync.zoomEnabled){
-                    _this._mapSync._update_outlines( _this );
-                    return false;
-                }
-            });
+        //If zoom is made during dragging => reset and update on next drag
+        if (this.$container.hasClass('map-sync-dragging')){
+            this.fire('dragend');
+            this.callDragstartOnNextDrag = true;
+        }
     }
 
     L.Map.include({
         _mapSync_addEvents_outline: function(){
             this.on('dragstart', map_on_dragstart_outline);
             this.on('dragend',   map_on_dragend_outline  );
-            this.on('zoomend',   map_on_zoomend_outline  );
+            if (this._mapSync.options.inclDisabled){
+                this.on('drag', map_on_drag_outline);
+                this.on('zoomend', map_on_zoomend_outline );
+            }
         }
     });
 
@@ -678,10 +873,11 @@
     ********************************************************************/
     L.MapSync = L.Class.extend({
         options: {
-            VERSION : "2.0.0",
+            VERSION : "2.1.0",
             iconName: 'hand',
             showShadowCursor: true,
-            showOutline     : true
+            showOutline     : true,
+            inclDisabled    : false
         },
 
         /***********************************************************
@@ -689,10 +885,11 @@
         ***********************************************************/
         initialize: function(options) {
             L.setOptions(this, options);
-            this.list = [];
+            this.list = {};
 
             this.enableShadowCursor( this.options.showShadowCursor );
             this.enableOutline( this.options.showOutline );
+            this.save_showShadowCursor = false;
         },
 
         /***********************************************************
@@ -702,15 +899,9 @@
             options = L.Util.extend( {
                 enabled       : true,
                 zoomOffset    : 0,
-                //TODO zoomEnabled   : true,
-                $map_container: $(map.getContainer())
             }, options || {});
 
-            map._mapSync = this;
-            map._syncOffsetFns = {};
-            map.options = map.options || {};
-            map.options.mapSync = options;
-            map.options.mapSync.$map_container.addClass('map-sync-container');
+            map._addToMapSync( this, options );
 
             this.mainMap = this.mainMap ? this.mainMap : map;
             map.options.mapSync.isMainMap = (map == this.mainMap);
@@ -719,7 +910,6 @@
                 //Main map is always on
                 map.options.mapSync.enabled = true;
                 map.options.mapSync.zoomOffset = 0;
-                //TODO map.options.mapSync.zoomEnabled = true;
             }
             else
                 //Set no-main on-loaded maps to match the main map
@@ -736,33 +926,25 @@
             Create and add events and overwrite methods to show, hide, and update outlines
             showing either the active map in other maps or the main map in the active map
             *********************************************************************************************/
-            function create_$mapOutline(){
-                return $('<div class="show-for-leaflet-map-sync-outline map-sync-outline"><div/></div>');
-            }
+            /*
+            Create a outline in all other maps and create a outline inside the map for all other maps
+            There are two versions:
+                div      : used when two maps are enabled => they have the same center and there outlines are div centered on the other map
+                rectangle: used when one or both the maps ar disabled BUT inclDisabled is set in mapSync => They are rectangles with fixed positions
+            */
+            map.options.mapSync.outlineList = {};
 
-            //Create the outlines showing either the active map in other maps or the main map in the active map
-            map.options.mapSync.$mapOutline = create_$mapOutline();
-            map.options.mapSync.$map_container.append( map.options.mapSync.$mapOutline );
+            $.each( this.list, function( id, otherMap ){
+                //Create div-outline and rectangle-outline of map in the other map
+                map.options.mapSync.outlineList[id] = new L.MapSync_outline(map, otherMap);
 
-            //Create a outline in all other maps and create a outline inside the map for all other maps
-            map.options.mapSync.outlineList = [];
-            map.options.mapSync.indexInList = this.list.length;
-            $.each( this.list, function( index, otherMap ){
-                //Create outline of map in the other map
-                var $mapOutline = create_$mapOutline();
-                otherMap.options.mapSync.$map_container.append( $mapOutline );
-                map.options.mapSync.outlineList[ index ] = $mapOutline;
-
-                //Craete outline of the other map in map
-                $mapOutline = create_$mapOutline();
-                map.options.mapSync.$map_container.append( $mapOutline );
-                otherMap.options.mapSync.outlineList[ map.options.mapSync.indexInList ] = $mapOutline;
-
+                //Craete div-outline and rectangle-outline of the other map in map
+                otherMap.options.mapSync.outlineList[map.options.mapSync.id] = new L.MapSync_outline(otherMap, map);
             });
             map._mapSync_addEvents_outline();
 
             //Add to list
-            this.list.push(map);
+            this.list[map.options.mapSync.id] = map;
 
             //Enable the map
             if (options.enabled)
@@ -816,16 +998,16 @@
                 map.setView(this.mainMap.getCenter(), this.mainMap.getZoom() + map.options.mapSync.zoomOffset, NO_ANIMATION );
                 map._mapSync_adjustMinMaxZoom();
 
-                map.options.mapSync.$map_container.addClass( 'map-sync-enabled' );
                 map.options.mapSync.enabled = true;
                 //If the cursor is over an enabled map => fire a mouseover to update the other maps
                 this._forEachMap({
                     mapFunction: function( map ) {
-                        if (map.options.mapSync.$map_container.hasClass( 'map-sync-mouseover' ) )
+                        if (map.$container.hasClass( 'map-sync-mouseover' ) )
                             map._mapSync._onMouseOverMap( map );
                     }
                 });
 
+                map._mapSyncSetClass();
                 map.fire("mapsyncenabled");
             }
         },
@@ -837,12 +1019,11 @@
             //Check if map has been added to a MapSync-object
             if (map.options && map.options.mapSync && (map._mapSync == this) && !map.options.mapSync.isMainMap){
 
-                var mouseIsOver = map.options.mapSync.$map_container.hasClass( 'map-sync-mouseover' );
+                var mouseIsOver = map.$container.hasClass( 'map-sync-mouseover' );
                 //If the cursor is over the enabled map => fire a mouseout to update the other maps
                 if (mouseIsOver)
                     this._onMouseOutMap( map );
 
-                map.options.mapSync.$map_container.removeClass( 'map-sync-enabled' );
                 map.options.mapSync.enabled = false;
 
                 if (mouseIsOver)
@@ -852,33 +1033,10 @@
                 map.setMinZoom( map.options.mapSync.minZoomOriginal, true );
                 map.setMaxZoom( map.options.mapSync.maxZoomOriginal, true );
 
+                map._mapSyncSetClass();
                 map.fire("mapsyncdisabled");
             }
         },
-
-/* TODO
-        //**************************************************************************
-        //enableZoom( map ) - enable the sync of zoom for map
-        enableZoom: function( map ){
-            if (map.options && map.options.mapSync && (map._mapSync == this) && !map.options.mapSync.isMainMap){
-                map.options.mapSync.zoomEnabled = true;
-                if (map.options.mapSync.enabled)
-                    //Adjust zoom (center is already in sync)
-                    map.setView(map.getCenter(), this.mainMap.getZoom() + map.options.mapSync.zoomOffset, NO_ANIMATION );
-
-                map.fire("mapsynczoomenabled");
-            }
-        },
-
-        //**************************************************************************
-        //disableZoom( map ) - disable the sync of zoom for map
-        disableZoom: function( map ){
-            if (map.options && map.options.mapSync && (map._mapSync == this) && !map.options.mapSync.isMainMap){
-                map.options.mapSync.zoomEnabled = false;
-                map.fire("mapsynczoomdisabled");
-            }
-        },
-*/
 
         //**************************************************************************
         //setZoomOffset( map, zoomOffset ) - Change the zoom-offset for map relative to main-map
@@ -887,7 +1045,7 @@
                 map.options.mapSync.zoomOffset = zoomOffset;
                 map._mapSync_adjustMinMaxZoom();
 
-                if (map.options.mapSync.enabled/*TODO && map.options.mapSync.zoomEnabled*/)
+                if (map.options.mapSync.enabled)
                     map.setView(this.mainMap.getCenter(), this.mainMap.getZoom() + map.options.mapSync.zoomOffset, NO_ANIMATION );
 
                 map.fire("mapsynczoomoffsetchanged");
@@ -897,19 +1055,16 @@
         //**************************************************************************
         //remove( map )
         remove: function( map ){
-            for (var i=0; i<this.list.length; i++ )
-                if (this.list[i] == map){
-                    this.list.splice(i, 1);
-                    break;
-                }
+            delete this.list[map.options.mapSync.id];
         },
 
         //**************************************************************************
         //forEachMap( function( index, map ) ) - Call the function with each map
         forEachMap: function( mapFunction, inclDisabled ){
-            for (var i=0; i<this.list.length; i++ )
-                if (inclDisabled || this.list[i].options.mapSync.enabled)
-                    mapFunction( i, this.list[i] );
+            $.each(this.list, function(id, map){
+                if (inclDisabled || map.options.mapSync.enabled)
+                    mapFunction( id, map );
+            });
         },
 
         /**************************************************************************
@@ -919,36 +1074,25 @@
             {mapFunction: function(map, arg), arguments: [], excludeMap: leaflet-map, inclDisabled: boolean } )
         **************************************************************************/
         _forEachMap: function( options ){
-            var i, nextMap, nextArg;
+            var _this = this,
+                nextArg;
             if ($.isFunction(options))
-                $.each(this.list, function(index, nextMap){ options(nextMap); });
+                $.each(this.list, function(index, map){
+                    options(map);
+                });
             else
-                for (i=0; i<this.list.length; i++ ){
-                    nextMap = this.list[i];
-                    if ((nextMap != options.excludeMap) && (options.inclDisabled || nextMap.options.mapSync.enabled)){
-                        nextArg = [nextMap];
+                $.each(this.list, function(id, map){
+                    if ((map != options.excludeMap) && (map.options.mapSync.enabled || options.inclDisabled || (options.allowDisabled && _this.options.inclDisabled))){
+                        nextArg = [map];
                         options.mapFunction.apply(undefined, nextArg.concat(options.arguments || []) );
                     }
-                }
+                });
         },
 
         //**************************************************************************
         //_updateMaps - Update the center and zoom for all enabled maps to be equal mainMap
         _updateMaps: function(){
             this.mainMap.setView( this.mainMap.getCenter(), this.mainMap.getZoom() );
-        },
-
-        //**************************************************************************
-        //_update_outlines - set dimentions, color and display for all outlines
-        // activeMap = the map being dragged
-        _update_outlines: function( activeMap ){
-
-            //Clean up: Hide all outline
-            this._hide_outlines();
-
-            //Draw all outline
-            activeMap._mapSync_update_outline();
-
         },
 
         //**************************************************************************
@@ -978,36 +1122,38 @@
         //**************************************************************************
         //_onMouseOverMap - call when mouseover map._container
         _onMouseOverMap: function ( map ){
-            map.options.mapSync.$map_container.addClass( 'map-sync-mouseover' );
+            map.$container.addClass( 'map-sync-mouseover' );
 
             //Add passive-class to all sibling-maps
-            map._mapSync_allOtherMaps( function(otherMap){
-                otherMap.options.mapSync.$map_container.addClass( 'map-sync-passive' );
-            });
+            map._mapSync_allOtherMaps(
+                function(otherMap){
+                    otherMap.$container.addClass( 'map-sync-passive' );
+                },
+                null,   //arguments
+                true    //allowDisabled
+            );
         },
 
         //**************************************************************************
         //_onMouseOutMap - call when mouseout from map._container
         _onMouseOutMap: function ( map ){
-            map.options.mapSync.$map_container.removeClass( 'map-sync-mouseover' );
+            map.$container.removeClass( 'map-sync-mouseover' );
 
-           //Remove passive-class from all maps
-            if (map.options.mapSync.enabled)
-                this._forEachMap({
-                    mapFunction : function(map){ map.options.mapSync.$map_container.removeClass( 'map-sync-passive' ); },
-                    inclDisabled: true
+            //Remove passive-class from all maps
+            this._forEachMap({
+                mapFunction : function(map){
+                    map.$container.removeClass( 'map-sync-passive' );
+                },
+                inclDisabled: true
             });
         },
-
 
         //**************************************************************************
         //_updateCursor - Update the latlng-position of all the shadow-cursors
         _updateCursor: function( latlng ){
             if (latlng)
                 this._forEachMap({
-                    mapFunction : function( map, latlng ) {
-                        map.options.mapSync.cursorMarker.setLatLng( latlng );
-                    },
+                    mapFunction : function( map, latlng ) { map.options.mapSync.cursorMarker.setLatLng( latlng ); },
                     arguments   : [latlng],
                     inclDisabled: true
                 });

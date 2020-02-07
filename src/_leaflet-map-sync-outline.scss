@@ -2,82 +2,115 @@
 leaflet-map-sync-outline
 ************************************************/
 
+//show-for-leaflet-map-sync-outline
 @include show-and-hide-for-modernizr-test(
-    $modernizr-test: 'leaflet-map-sync-outline' ,
-    $incl-no-selector: false,
+    $modernizr-test    : 'leaflet-map-sync-outline' ,
+    $incl-no-selector  : false,
     $incl-table-display: false
 );
 
 
+/*
+A map will have one of four state
+1: Main    = The first map added to MapSync. Can not be disabled. Its outline color is $main-map-outline ("blue")
+2: Normal  = The not-first map added to MapSync and enabled. Its outline color is $map-outline ("yellow")
+3: Visible = Disabled when MapSync.options.inclDisabled = true => Not sync but it outline are show in other maps and visa versa. Its outline is color $visible-map-outline ("gray")
+4: Hidden  = Disabled when MapSync.options.inclDisabled = false => No outline is displayed
+
+When a map is being dragged all maps with start 1-3 get a border in the same color as the outline
+The map being dragged is the 'active' map and the map and it outlines get a full border
+All other maps and there outlins get a dotted border
+
+html.[no-]leaflet-map-sync-outline.[no-]leaflet-map-sync-dragging
+    .map-container.map-sync-container(.map-sync-main | .map-sync-normal | .map-sync-visible | .map-sync-hidden)[map-sync-dragging][map-sync-outline]
+        div.map-sync-outline(.map-sync-main | .map-sync-normal | .map-sync-visible)[.map-sync-outline-show]
+*/
+
+
+$border-style-dotted    : dotted;
+$stroke-dasharray-dotted: 0 4;
+$opacity                : .2;
+
 
 //The extra class for the map-container
 .map-sync-container {
-    $secondBorderStyle: dotted;  //dashed
-    $zIndex           : 30000;
+    /****************************************************
+    MAP-CONTAINER
+    *****************************************************/
+    border: $map-outline-border-width $border-style-dotted transparent;
 
-    border: $map-outline-border-width solid transparent;
-    .leaflet-map-sync-outline &.map-sync-active-dragging {
-        border-color: $map-outline;
+    //Adjust border around the map when outline is enabled and one map is being dragged and the map has one or more visible outline(s)
+    .leaflet-map-sync-outline.leaflet-map-sync-dragging &.map-sync-outline {
+        //Border-solor
+        &.map-sync-main    { border-color: $main-map-outline;    }
+        &.map-sync-normal  { border-color: $map-outline;         }
+        &.map-sync-visible { border-color: $visible-map-outline; }
+        &.map-sync-hidden  { border-color: transparent;          }
+
+        //The dragged map get full border
+        &.map-sync-dragging { border-style: solid; }
     }
 
-    .leaflet-map-sync-outline &.map-sync-main-dragging   {
-        border-color: $main-map-outline;
-        border-style: $secondBorderStyle;
-    }
-    .leaflet-map-sync-outline &.map-sync-second-dragging {
-        border-color: $map-outline;
-        border-style: $secondBorderStyle;
-    }
-
-    //The outline of either the main or the active map
-    .map-sync-outline {
+    /****************************************************
+    OUTLINE
+    *****************************************************/
+    //The outline as fixed div of either the main or the active map
+    div.map-sync-outline {
         position: absolute;
         left   : 0px;
         top    : 0px;
         right  : 0px;
         bottom : 0px;
-        z-index: $zIndex + 2;
-
-        border: $map-outline-border-width solid $map-outline;
         box-sizing: border-box;
         display: none;
+
+        border: $map-outline-border-width $border-style-dotted $map-outline;
         //inner div
         > div {
-            width : 100%;
-            height: 100%;
+            width           : 100%;
+            height          : 100%;
             background-color: $map-outline;
-            opacity: 0.2;
-        }
-
-        //Show the outline
-        &.map-sync-outline-show {
-            display: block;
-
-            transition-duration: 100ms; //Leaflet default for animation is 250ms
-            transition-timing-function: ease-out;
-
-        }
-
-        //Outline of main-map in active map
-        &.map-sync-outline-main {
-            z-index     : $zIndex + 1;
-            border-color: $main-map-outline;
-            border-style: $secondBorderStyle;
-            > div {
-                background-color: $main-map-outline;
-                opacity         : 0.1;
-            }
-        }
-
-        //Outline of other maps in active map
-        &.map-sync-outline-second {
-            z-index     : $zIndex;
-            border-color: $map-outline;
-            border-style: $secondBorderStyle;
-            > div {
-                background-color: $map-outline;
-                opacity         : 0.1;
-            }
+            opacity         : $opacity;
         }
     }
+
+    path.map-sync-outline {
+        //Style when it is a L.Rectangle (path)
+        display         : none;
+        stroke-width    : $map-outline-border-width;
+        stroke          : $map-outline;
+        fill            : $map-outline;
+        stroke-dasharray: $stroke-dasharray-dotted;
+        fill-opacity    : $opacity;
+    }
+
+    //Show the outline
+    div.map-sync-outline.map-sync-outline-show {
+        display: block;
+        transition-duration: 100ms; //Leaflet default for animation is 250ms
+        transition-timing-function: ease-out;
+    }
+    path.map-sync-outline.map-sync-outline-show {
+        display: block;
+    }
+
+    //Full border when outline is of dragged map
+    div.map-sync-outline.map-sync-outline-dragging  { border-style: solid; }
+    path.map-sync-outline.map-sync-outline-dragging { stroke-dasharray: none; }
+
+
+    //Classes for different colors
+    @mixin border-and-background-color($name, $color) {
+        div.map-sync-outline.#{$name} {
+            border-color: $color;
+            > div { background-color: $color; }
+        }
+        path.map-sync-outline.#{$name} {
+            stroke: $color;
+            fill  : $color;
+        }
+    }
+    @include border-and-background-color(map-sync-main,    $main-map-outline);
+    @include border-and-background-color(map-sync-normal,  $map-outline);
+    @include border-and-background-color(map-sync-visible, $visible-map-outline);
 }

@@ -79,11 +79,8 @@
                         map       = this._map,
                         mapSync   = map._mapSync;
 
-                    if (
-                        mapSync && mapSync.options.showShadowCursor &&
-                        map.options.mapSync && map.options.mapSync.enabled &&
-                        ((key in this._panKeys) || (key in this._zoomKeys))
-                    ){
+                    if ( map._mapSync_showShadowCursor() &&
+                         ((key in this._panKeys) || (key in this._zoomKeys)) ){
                         //It is a pan or zoom key on a enabled map and there are shadow-cursors => hide shadow-cursor and show them again in 1000ms if no key is pressed before
                         if (mapSync.timeoutId)
                             window.clearTimeout(mapSync.timeoutId);
@@ -106,19 +103,22 @@
     function map_on_XX_cursor(){
     ********************************************************************/
     function map_whenReady_cursor(){
-        //Create a marker to be used as 'shadow' cursor and move it to a popupPane to make the cursor apear over the popups
-        var divIcon = L.divIcon({ className: 'map-sync-cursor-icon', iconSize: ns.iconSize });
-        this.options.mapSync.cursorMarker = L.marker( this.getCenter(), {icon: divIcon} ).addTo(this);
+        //Create a marker to be used as 'shadow' cursor
+        this.options.mapSync.cursorMarker =
+            L.marker(this.getCenter(), {
+                icon: L.divIcon({
+                    className : 'map-sync-cursor-icon',
+                    iconSize  : ns.iconSize,
+                }),
+                pane: this.maySyncPaneCursor
+            });
 
-        //Create a new pane above everything and move the shadow-cursor from markerPane to this pane
-        var cursorContainer = L.DomUtil.create( 'div', 'show-for-leaflet-map-sync-cursor map-sync-cursor-container', this._mapPane );
-        this._panes.markerPane.removeChild( this.options.mapSync.cursorMarker._icon );
-        cursorContainer.appendChild( this.options.mapSync.cursorMarker._icon );
+        this.options.mapSync.cursorMarker.addTo(this);
     }
 
     function map_on_zoomstart_cursor(){
         var mapSync = this._mapSync;
-        if (mapSync && mapSync.options.showShadowCursor && this.options.mapSync && this.options.mapSync.enabled && !mapSync.mapWithFirstZoomstart){
+        if (this._mapSync_showShadowCursor() && !mapSync.mapWithFirstZoomstart){
             mapSync.mapWithFirstZoomstart = this;
             mapSync.disableShadowCursor();
         }
@@ -143,12 +143,12 @@
 
     function map_on_mousemove_cursor( mouseEvent ){
         //Update the position of the shadow-cursor
-        if (this._mapSync && this.options.mapSync.enabled)
+        if (this._mapSyncOptions(null, true))
             this._mapSync._updateCursor( mouseEvent.latlng );
     }
 
     function map_setCursorFromMouseEvent( mouseEvent ){
-        if (this._mapSync && this.options.mapSync.enabled)
+        if (this._mapSyncOptions(null, true))
             this._mapSync._setCursorFromMouseEvent( mouseEvent );
     }
 
@@ -169,7 +169,7 @@
             mapSync.timeoutId = window.setTimeout( $.proxy(map_showShadowCursorAgain, this), 500);
         }
 
-        if (mapSync && this.options.mapSync.enabled)
+        if (this._mapSyncOptions(null, true))
             mapSync._setCursorFromElement( this._container );
     }
 

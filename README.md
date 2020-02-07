@@ -24,11 +24,11 @@ http://FCOO.github.io/leaflet-map-sync/demo/
 	var mapSync = new L.MapSync({
             showOutline     : true, //or false
             showShadowCursor: true  //or false
+            inclDisabled    : false //When true shadow-cursor and outline (if enabled) are also shown on disabled maps
 
         });
 	mapSync.add(map);
 	mapSync.add(map2, {zoomoffset: +2 });
-	mapSync.add(map3, {zoomOffset: -2 /*TODO, zoomEnabled: false*/ });
 
 ### Methods
 
@@ -57,7 +57,6 @@ http://FCOO.github.io/leaflet-map-sync/demo/
 | Option | Type | Default | Description |
 | :--: | :--: | :-----: | --- |
 | `enabled` | `Boolean` | `true` | If `true` the map will be synchronized. |
-| `zoomEnabled` | `Boolean` | `true` | If `true` the zoom of the map will be synchronized with the main map using `options.zoomOffset`. |
 | `zoomOffset` | `Number` | `0` | The different in zoom-level between tha main map and the map.<br> `zoomOffset` > 0 means that the map will be zoom more in than the main map |
 
 ### Events
@@ -65,8 +64,6 @@ The following events are fired on the map:
 
 `"mapsyncenabled"`: when `MapSync.enable( map )` is called
 `"mapsyncdisabled"`: when `MapSync.disable( map )` is called
-`"mapsynczoomenabled"`: when `MapSync.enableZoom( map )` is called
-`"mapsynczoomdisabled"`: when `MapSync.disableZoom( map )` is called
 `"mapsynczoomoffsetchanged"`: when `MapSync.setZoomOffset( map, zoomOffset )` is called
 
 ### Properties 

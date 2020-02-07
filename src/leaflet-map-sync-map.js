@@ -9,10 +9,13 @@
     "use strict";
 
     var NO_ANIMATION = {
-        animate: false,
-        reset  : true,
-        disableViewprereset: true
-    };
+            animate: false,
+            reset  : true,
+            disableViewprereset: true
+        },
+        maySyncPaneOutline = 'map-sync-outline',
+        maySyncPaneCursor  = 'map-sync-cursor',
+        mapSyncId          = 0;
 
     /***********************************************************
     Extentions for L.Map
@@ -22,26 +25,103 @@
         ------------------------ ----------------------------------------
         mapsyncenabled           MapSync.enable( map )
         mapsyncdisabled          MapSync.disable( map )
-  TODO: mapsynczoomenabled       MapSync.enableZoom( map )
-  TODO: mapsynczoomdisabled      MapSync.disableZoom( map )
         mapsynczoomoffsetchanged MapSync.setZoomOffset( map, zoomOffset )
 
     ***********************************************************/
     L.Map.include({
 
+        _addToMapSync: function( mapSync, options ){
+            this.$container = this.$container || $(this.getContainer());
+            this._mapSync = mapSync;
+            this._syncOffsetFns = {};
+            this.options = this.options || {};
+            this.options.mapSync = options;
+            this.options.mapSync.id = 'mapSync' + mapSyncId++;
+            this.$container.addClass('map-sync-container');
+
+            //Create a container to contain the outline of other maps as div
+            //z-index for div-outlines = just below controls
+            this.options.mapSync.zIndex = parseInt($(this._controlContainer).children().css('z-index')) - 20;
+
+            this.$mapSyncOutlineContainer = this.$mapSyncOutlineContainer ||
+                $('<div/>')
+                    .addClass('map-sync-outline-container show-for-leaflet-map-sync-outline')
+                    .appendTo( this.$container );
+
+            //Create pane to contain cursor and outline as rectangles for map.
+            if (!this.getPane(maySyncPaneOutline)){
+                this.createPane(maySyncPaneOutline);
+                this.maySyncPaneOutline = this.getPane(maySyncPaneOutline);
+                $(this.maySyncPaneOutline).addClass('show-for-leaflet-map-sync-outline');
+
+                this.createPane(maySyncPaneCursor);
+                this.maySyncPaneCursor = this.getPane(maySyncPaneCursor);
+                $(this.maySyncPaneCursor).addClass('show-for-leaflet-map-sync-cursor');
+
+                this.whenReady( function(){
+                    var zIndex = parseInt($(this.getPanes().popupPane).css('z-index'));
+                    //Shadow cursor is palced above popups
+                    $(this.maySyncPaneCursor).css('z-index', zIndex + 1 );
+                    //Outlines are placed below popups
+                    $(this.maySyncPaneOutline).css('z-index', zIndex - 1 );
+                }, this);
+            }
+        },
+
+
+        _mapSyncSetClass: function(){
+            var enabled      = this.options.mapSync.enabled,
+                isMainMap    = this.options.mapSync.isMainMap,
+                inclDisabled = this._mapSync.options.inclDisabled;
+            this.$container
+                .toggleClass('map-sync-main',    enabled &&  isMainMap)
+                .toggleClass('map-sync-normal',  enabled && !isMainMap)
+                .toggleClass('map-sync-visible', !enabled  &&  inclDisabled)
+                .toggleClass('map-sync-hidden',  !enabled  && !inclDisabled);
+        },
+
         /***********************************
-        _mapSync_allOtherMaps(mapFunction, arg)
+        _mapSyncOptions(optionsId, testSelfEnabled)
+        Return true if mapSync[optionsId] is true and
+        check for this.options.mapSync.enabled if testSelfEnabled == true
+        ***********************************/
+        _mapSyncOptions: function(optionsId, testSelfEnabled){
+            var mapSync = this._mapSync,
+                result = mapSync &&
+                         (!optionsId || mapSync.options[optionsId]);
+            if (result && testSelfEnabled)
+                result = mapSync.options.inclDisabled || (this.options.mapSync && this.options.mapSync.enabled);
+            return !!result;
+        },
+
+        /***********************************
+        _mapSync_showShadowCursor()
+        ***********************************/
+        _mapSync_showShadowCursor: function(){
+            return this._mapSyncOptions('showShadowCursor', true);
+        },
+
+        /***********************************
+        _mapSync_showOutline()
+        ***********************************/
+        _mapSync_showOutline: function(){
+            return this._mapSyncOptions('showOutline', true);
+        },
+
+        /***********************************
+        _mapSync_allOtherMaps(mapFunction, arg, allowDisabled)
         mapFunction = function(map, arg[0], arg[1],..., arg[N])
         Visit all the other enabled amps from this._mapSync and call
         mapFunction(map, arg[0], arg[1],..., arg[N])
         ***********************************/
-        _mapSync_allOtherMaps: function (mapFunction, arg){
-            if (this._mapSync && this.options.mapSync && this.options.mapSync.enabled)
+        _mapSync_allOtherMaps: function (mapFunction, arg, allowDisabled){
+            if (this._mapSync && this.options.mapSync && this.options.mapSync.enabled || allowDisabled)
                 this._mapSync._forEachMap({
-                    'mapFunction' : mapFunction,
-                    'arguments'   : arg,
-                    'excludeMap'  : this,
-                    'inclDisabled': false
+                    mapFunction  : mapFunction,
+                    arguments    : arg,
+                    excludeMap   : this,
+                    inclDisabled : false,
+                    allowDisabled: allowDisabled
                 });
         },
 
@@ -88,7 +168,7 @@
                 this.options.mapSync.minZoomOriginal = minZoom !== undefined ? minZoom : this.options.mapSync.minZoomOriginal;
                 this.options.mapSync.maxZoomOriginal = maxZoom !== undefined ? maxZoom : this.options.mapSync.maxZoomOriginal;
 
-                if (!this.options.mapSync.enabled/*TODO || this.options.mapSync.zoomEnabled*/){
+                if (!this.options.mapSync.enabled){
                     this.setMinZoom( this.options.mapSync.minZoomOriginal, true );
                     this.setMaxZoom( this.options.mapSync.maxZoomOriginal, true );
                 }
@@ -127,7 +207,6 @@
             // It is ugly to have state, but we need it in case of inertia.
             this._syncDragend = true;
         },
-
 
         /***********************************
         _tryAnimatedZoom
@@ -178,10 +257,10 @@
                 });
 
                 if (!sync && this._mapSync && this.options.mapSync.enabled) {
-                    var newMainZoom = zoom - this.options.mapSync.zoomOffset; //TODO var newMainZoom = this.options.mapSync.zoomEnabled ? zoom - this.options.mapSync.zoomOffset : null;
+                    var newMainZoom = zoom - this.options.mapSync.zoomOffset;
                     this._mapSync_allOtherMaps( function(otherMap) {
                         sandwich(otherMap, function (/*obj*/) {
-                            var newMapZoom = newMainZoom + otherMap.options.mapSync.zoomOffset; //TODO var newMapZoom = (newMainZoom !== null) && otherMap.options.mapSync.zoomEnabled ? newMainZoom + otherMap.options.mapSync.zoomOffset : otherMap.getZoom();
+                            var newMapZoom = newMainZoom + otherMap.options.mapSync.zoomOffset;
                             return otherMap.setView(center, newMapZoom, options, true );
                         });
                     });

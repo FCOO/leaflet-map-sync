@@ -155,7 +155,8 @@
 
 		var mapSync= new L.MapSync({
                 showOutline     : true,
-                showShadowCursor: true
+                showShadowCursor: false,
+                inclDisabled: true
             });
 
         var map1zoom    = 7,
@@ -178,6 +179,7 @@
 
         //*************************************************************
         var map3 = mapSync.add(L.map('map3', {attributionControl: false, minZoom: map1minzoom, maxZoom:map1maxzoom}), {zoomOffset: -2});
+
         $('#enableMap3').click( function(){ mapSync.enable( map3 ); });
 		$('#disableMap3').click( function(){ mapSync.disable( map3 ); });
 
@@ -196,9 +198,9 @@
 
 
         //*************************************************************
-		mapSync.add(L.map('map4', {worldCopyJump: true, attributionControl: false}), {zoomOffset: 1 });
-		mapSync.add(L.map('map5', {worldCopyJump: true, attributionControl: false}), {zoomOffset: 1 });
-        mapSync.add(L.map('map6', {worldCopyJump: true, attributionControl: false}), {zoomOffset: 1 });
+		mapSync.add(L.map('map4', {worldCopyJump: true, attributionControl: false}), {zoomOffset: -1 });
+		var map5 = mapSync.add(L.map('map5', {worldCopyJump: true, attributionControl: false}), {zoomOffset: 0 });
+        mapSync.add(L.map('map6', {worldCopyJump: true, attributionControl: false}), {zoomOffset: 0 });
 
 
         //*************************************************************
@@ -226,8 +228,8 @@
 		    ], {color: 'green'}).addTo(map).bindPopup("I am polygon at map "+index);
 
 
-            var crossMarker = $('<div class="cross-marker"><div><div/></div><div><div/></div></div>');
-            $( map.getContainer() ).append( crossMarker );
+//HER            var crossMarker = $('<div class="cross-marker"><div><div/></div><div><div/></div></div>');
+//HER            $( map.getContainer() ).append( crossMarker );
 
 /*
 		    function openPopup( e ) {
@@ -244,6 +246,9 @@
 */
 
         });
+
+        mapSync.disable( map3 );
+//HER        mapSync.disable( map5 );
 	</script>
 </body>
 </html>

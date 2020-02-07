@@ -4,7 +4,10 @@ Variable with the color and style of outline
 ************************************************/
 
 
-$map-outline      : #ff7800 !default; //"yellow". Alt: #EFFC51; //#E2FA00; //#92A200; //#ff7800;
-$main-map-outline : #3216B0 !default; //"blue"    Alt: #4877BC; //#0E51A7; //#08346C; //#028E9B;
+$main-map-outline   : #3216B0 !default; //"blue"    Alt: #4877BC; //#0E51A7; //#08346C; //#028E9B;
+$map-outline        : #ff7800 !default; //"yellow". Alt: #EFFC51; //#E2FA00; //#92A200; //#ff7800;
+$visible-map-outline: #808080 !default;   //"Gray" "DarkGray
+
+
 
 $map-outline-border-width: 2px;
