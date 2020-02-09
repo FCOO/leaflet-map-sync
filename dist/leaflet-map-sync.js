@@ -873,7 +873,7 @@
     ********************************************************************/
     L.MapSync = L.Class.extend({
         options: {
-            VERSION : "2.1.0",
+            VERSION : "2.1.1",
             iconName: 'hand',
             showShadowCursor: true,
             showOutline     : true,
@@ -949,6 +949,8 @@
             //Enable the map
             if (options.enabled)
                 this.enable( map );
+            else
+                this.disable( map );
 
             return map;
         }, //end of add

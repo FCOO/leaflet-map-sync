@@ -105,6 +105,8 @@
             //Enable the map
             if (options.enabled)
                 this.enable( map );
+            else
+                this.disable( map );
 
             return map;
         }, //end of add
