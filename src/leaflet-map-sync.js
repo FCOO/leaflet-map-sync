@@ -201,6 +201,7 @@
         setZoomOffset: function( map, zoomOffset ){
             if (map.options && map.options.mapSync && (map._mapSync == this) && !map.options.mapSync.isMainMap){
                 map.options.mapSync.zoomOffset = zoomOffset;
+
                 map._mapSync_adjustMinMaxZoom();
 
                 if (map.options.mapSync.enabled)

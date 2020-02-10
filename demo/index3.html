@@ -80,23 +80,25 @@
         var offset = -2;//-3;
 		var map2 = L.map('map2', {
             attributionControl: false,
-            minZoom: map1minzoom + offset,
-            maxZoom:map1maxzoom + offset,
+            minZoom: map1minzoom - 2,
+            maxZoom:map1maxzoom + 2,
             worldCopyJump: true, //true,
             scrollWheelZoom      : true,
         });
-		mapSync.add(map2, {enabled: false, zoomOffset: offset });
+		mapSync.add(map2, {enabled: true, zoomOffset: offset });
 
         //*************************************************************
-        var offset = -1;//-3;
+
+        var offset = +2;//-3;
 		var map3 = L.map('map3', {
             attributionControl: false,
-            minZoom: map1minzoom + offset,
-            maxZoom:map1maxzoom + offset,
+            minZoom: map1minzoom - 2,
+            maxZoom:map1maxzoom + 2,
             worldCopyJump: true, //true,
             scrollWheelZoom      : true,
         });
 		mapSync.add(map3, {enabled: true, zoomOffset: offset });
+
         //*************************************************************
 
         //*************************************************************
@@ -137,13 +139,14 @@
 		}
 		map.on('click', openPopup );
 */
-var test = false;
+var test = -2;
 		map.on('click', function(){
-            test = !test;
-            if (test)
-                mapSync.enable( map2 );
-            else
-                mapSync.disable( map2 );
+            test = -test;
+            mapSync.setZoomOffset(map2, test);
+//HER            if (test)
+//HER                mapSync.enable( map2 );
+//HER            else
+//HER                mapSync.disable( map2 );
 
         });
 

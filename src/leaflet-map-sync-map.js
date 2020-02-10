@@ -181,8 +181,8 @@
         Adjust min- and max-zoom according to min- and max-zoom of the main map
         ***********************************/
         _mapSync_adjustMinMaxZoom: function(){
-            this.setMinZoom( this._mapSync.mainMap.getMinZoom() + this.options.mapSync.zoomOffset, true );
-            this.setMaxZoom( this._mapSync.mainMap.getMaxZoom() + this.options.mapSync.zoomOffset, true );
+            this.setMinZoom( this._mapSync.mainMap.getMinZoom() + this.options.mapSync.zoomOffset );
+            this.setMaxZoom( this._mapSync.mainMap.getMaxZoom() + this.options.mapSync.zoomOffset );
         },
 
 

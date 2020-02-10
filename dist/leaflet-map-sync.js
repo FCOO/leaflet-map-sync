@@ -394,8 +394,8 @@
         Adjust min- and max-zoom according to min- and max-zoom of the main map
         ***********************************/
         _mapSync_adjustMinMaxZoom: function(){
-            this.setMinZoom( this._mapSync.mainMap.getMinZoom() + this.options.mapSync.zoomOffset, true );
-            this.setMaxZoom( this._mapSync.mainMap.getMaxZoom() + this.options.mapSync.zoomOffset, true );
+            this.setMinZoom( this._mapSync.mainMap.getMinZoom() + this.options.mapSync.zoomOffset );
+            this.setMaxZoom( this._mapSync.mainMap.getMaxZoom() + this.options.mapSync.zoomOffset );
         },
 
 
@@ -873,7 +873,7 @@
     ********************************************************************/
     L.MapSync = L.Class.extend({
         options: {
-            VERSION : "2.1.1",
+            VERSION : "2.1.2",
             iconName: 'hand',
             showShadowCursor: true,
             showOutline     : true,
@@ -1045,6 +1045,7 @@
         setZoomOffset: function( map, zoomOffset ){
             if (map.options && map.options.mapSync && (map._mapSync == this) && !map.options.mapSync.isMainMap){
                 map.options.mapSync.zoomOffset = zoomOffset;
+
                 map._mapSync_adjustMinMaxZoom();
 
                 if (map.options.mapSync.enabled)
