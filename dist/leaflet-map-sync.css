@@ -154,18 +154,18 @@ html.[no-]leaflet-map-sync-outline.[no-]leaflet-map-sync-dragging
   /****************************************************
     MAP-CONTAINER
     *****************************************************/
-  border: 2px dotted transparent;
+  border: 2px solid #909090;
   /****************************************************
     OUTLINE
     *****************************************************/ }
   .leaflet-map-sync-outline.leaflet-map-sync-dragging .map-sync-container.map-sync-outline.map-sync-main {
-    border-color: #3216B0; }
+    border: 2px dotted #3216B0; }
   .leaflet-map-sync-outline.leaflet-map-sync-dragging .map-sync-container.map-sync-outline.map-sync-normal {
-    border-color: #ff7800; }
+    border: 2px dotted #ff7800; }
   .leaflet-map-sync-outline.leaflet-map-sync-dragging .map-sync-container.map-sync-outline.map-sync-visible {
-    border-color: #808080; }
+    border: 2px dotted #808080; }
   .leaflet-map-sync-outline.leaflet-map-sync-dragging .map-sync-container.map-sync-outline.map-sync-hidden {
-    border-color: transparent; }
+    border: 2px dotted #909090; }
   .leaflet-map-sync-outline.leaflet-map-sync-dragging .map-sync-container.map-sync-outline.map-sync-dragging {
     border-style: solid; }
   .map-sync-container div.map-sync-outline {

@@ -177,14 +177,24 @@
         },
 
         /***********************************
-        _mapSync_setMinMaxZoom()
+        _mapSync_adjustMinMaxZoom()
         Adjust min- and max-zoom according to min- and max-zoom of the main map
         ***********************************/
         _mapSync_adjustMinMaxZoom: function(){
-            this.setMinZoom( this._mapSync.mainMap.getMinZoom() + this.options.mapSync.zoomOffset );
-            this.setMaxZoom( this._mapSync.mainMap.getMaxZoom() + this.options.mapSync.zoomOffset );
-        },
+            var mainMap = this._mapSync.mainMap,
+                minZoom = mainMap.getMinZoom() + this.options.mapSync.zoomOffset,
+                maxZoom = mainMap.getMaxZoom() + this.options.mapSync.zoomOffset;
 
+            this.options.minZoom = minZoom;
+            this.options.maxZoom = maxZoom;
+
+            if (this.options.mapSync.enabled)
+                    mainMap._selfSetView();//this.mainMap.getCenter(), this.mainMap.getZoom() + map.options.mapSync.zoomOffset, NO_ANIMATION );
+            else
+                //Adjust zoom to new min and max
+                if ((this.getZoom() > maxZoom) || (this.getZoom() < minZoom))
+                    this.setZoom( Math.min( maxZoom, Math.max( minZoom, this.getZoom() ) ) );
+        },
 
         _selfSetView: function (/*event*/) {
             // reset the map, and let setView synchronize the others.

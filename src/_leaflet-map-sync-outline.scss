@@ -37,15 +37,15 @@ $opacity                : .2;
     /****************************************************
     MAP-CONTAINER
     *****************************************************/
-    border: $map-outline-border-width $border-style-dotted transparent;
+    border: $map-outline-border-width solid $map-container-border-color;
 
     //Adjust border around the map when outline is enabled and one map is being dragged and the map has one or more visible outline(s)
     .leaflet-map-sync-outline.leaflet-map-sync-dragging &.map-sync-outline {
-        //Border-solor
-        &.map-sync-main    { border-color: $main-map-outline;    }
-        &.map-sync-normal  { border-color: $map-outline;         }
-        &.map-sync-visible { border-color: $visible-map-outline; }
-        &.map-sync-hidden  { border-color: transparent;          }
+        //Border
+        &.map-sync-main    { border: $map-outline-border-width $border-style-dotted $main-map-outline;           }
+        &.map-sync-normal  { border: $map-outline-border-width $border-style-dotted $map-outline;                }
+        &.map-sync-visible { border: $map-outline-border-width $border-style-dotted $visible-map-outline;        }
+        &.map-sync-hidden  { border: $map-outline-border-width $border-style-dotted $map-container-border-color; }
 
         //The dragged map get full border
         &.map-sync-dragging { border-style: solid; }

@@ -152,11 +152,11 @@
             //Check if map has been added to a MapSync-object
             if (map.options && map.options.mapSync && map._mapSync == this){
 
+                map.options.mapSync.enabled = true;
+
                 //Set the maps min- and max-zoom
-                map.setView(this.mainMap.getCenter(), this.mainMap.getZoom() + map.options.mapSync.zoomOffset, NO_ANIMATION );
                 map._mapSync_adjustMinMaxZoom();
 
-                map.options.mapSync.enabled = true;
                 //If the cursor is over an enabled map => fire a mouseover to update the other maps
                 this._forEachMap({
                     mapFunction: function( map ) {
@@ -164,7 +164,6 @@
                             map._mapSync._onMouseOverMap( map );
                     }
                 });
-
                 map._mapSyncSetClass();
                 map.fire("mapsyncenabled");
             }
@@ -203,9 +202,6 @@
                 map.options.mapSync.zoomOffset = zoomOffset;
 
                 map._mapSync_adjustMinMaxZoom();
-
-                if (map.options.mapSync.enabled)
-                    map.setView(this.mainMap.getCenter(), this.mainMap.getZoom() + map.options.mapSync.zoomOffset, NO_ANIMATION );
 
                 map.fire("mapsynczoomoffsetchanged");
             }

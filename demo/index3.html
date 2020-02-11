@@ -36,8 +36,8 @@
 
 <body style="height:100%; width:100%; margin:0; padding:0">
     <div class="container">
-        <div id="map"></div>
         <div id="map2"></div>
+        <div id="map" style="_border:2px solid green"></div>
         <div id="map3"></div>
     </div>
     <script src="bower_components.js"></script>
@@ -51,13 +51,13 @@
 
 		var mapSync= new L.MapSync({
                 showOutline     : true,
-                showShadowCursor: true,
+                showShadowCursor: false,
                 inclDisabled: true
             });
 
-        var map1zoom    = 7,
-            map1minzoom = 3,
-            map1maxzoom = 12,
+        var map1minzoom = 6,
+            map1zoom    = 8,
+            map1maxzoom = 10,
 
             globalTileSize = 256,
 
@@ -71,34 +71,38 @@
             attributionControl: false,
             minZoom: map1minzoom,
             maxZoom:map1maxzoom,
-            worldCopyJump: true, //true,
-            scrollWheelZoom      : true,
+            worldCopyJump  : true,
+            scrollWheelZoom: true,
 
-        }).setView([51.505, -0.09], map1zoom));
+        }).setView([51.505, 11], map1zoom));
 
         //*************************************************************
         var offset = -2;//-3;
 		var map2 = L.map('map2', {
             attributionControl: false,
-            minZoom: map1minzoom - 2,
-            maxZoom:map1maxzoom + 2,
-            worldCopyJump: true, //true,
-            scrollWheelZoom      : true,
+
+            minZoom: map1minzoom,
+            maxZoom: map1maxzoom,
+
+            worldCopyJump  : true,
+            scrollWheelZoom: true,
         });
 		mapSync.add(map2, {enabled: true, zoomOffset: offset });
 
         //*************************************************************
-
+/*
         var offset = +2;//-3;
 		var map3 = L.map('map3', {
             attributionControl: false,
-            minZoom: map1minzoom - 2,
-            maxZoom:map1maxzoom + 2,
-            worldCopyJump: true, //true,
-            scrollWheelZoom      : true,
-        });
-		mapSync.add(map3, {enabled: true, zoomOffset: offset });
 
+            minZoom: map1minzoom,
+            maxZoom: map1maxzoom,
+
+            worldCopyJump  : true,
+            scrollWheelZoom: true,
+        });
+		mapSync.add(map3, {enabled: false, zoomOffset: offset });
+*/
         //*************************************************************
 
         //*************************************************************
@@ -109,9 +113,9 @@
 //HER                maxZoom : map1maxzoom
 
             }).addTo(map);
-            map.setView([51.505, -0.09], map1zoom);
+            //map.setView([55.505, 12.5], map1zoom);
 
-
+/*
             L.circle([51.505, -0.09], 50000, {
 			    color: 'red',
 			    fillColor: '#f03',
@@ -124,7 +128,7 @@
 			    [51.505, 2.06],
 			    [52.51,  -0.09]
 		    ], {color: 'green'}).addTo(map).bindPopup("I am polygon at map "+index);
-
+*/
 
 /*
 		    function openPopup( e ) {
@@ -139,18 +143,27 @@
 		}
 		map.on('click', openPopup );
 */
-var test = -2;
-		map.on('click', function(){
-            test = -test;
-            mapSync.setZoomOffset(map2, test);
-//HER            if (test)
-//HER                mapSync.enable( map2 );
-//HER            else
-//HER                mapSync.disable( map2 );
+            var map2On = true;
+    		map.on('click', function(){
+                map2On = !map2On;
+                console.log('mqp2 ', map2On ? 'enabled' : 'disabled')
+                if (map2On)
+                    mapSync.enable( map2 );
+                else
+                    mapSync.disable( map2 );
+            });
+
+            var test = -2;
+            map2.on('click', function(){
+                test = -test;
+                mapSync.setZoomOffset(map2, test);
+            });
+
 
         });
 
-        });
+        map1.setView([55.505, 12.5], map1zoom);
+
 	</script>
 </body>
 </html>
