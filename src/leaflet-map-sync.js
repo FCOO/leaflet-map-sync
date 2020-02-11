@@ -102,9 +102,9 @@
             //Add to list
             this.list[map.options.mapSync.id] = map;
 
-            //Reset the maps min- and max-zoom
-            map.setMinZoom( map.options.mapSync.minZoomOriginal, true );
-            map.setMaxZoom( map.options.mapSync.maxZoomOriginal, true );
+            //Save original min- and max-zoom
+            map.options.mapSync.minZoomOriginal = map.getMinZoom();
+            map.options.mapSync.maxZoomOriginal = map.getMaxZoom();
 
             //Enable the map
             if (options.enabled)
@@ -152,10 +152,6 @@
             //Check if map has been added to a MapSync-object
             if (map.options && map.options.mapSync && map._mapSync == this){
 
-                //Save original min- and max-zoom
-                map.options.mapSync.minZoomOriginal = map.getMinZoom();
-                map.options.mapSync.maxZoomOriginal = map.getMaxZoom();
-
                 //Set the maps min- and max-zoom
                 map.setView(this.mainMap.getCenter(), this.mainMap.getZoom() + map.options.mapSync.zoomOffset, NO_ANIMATION );
                 map._mapSync_adjustMinMaxZoom();
@@ -190,6 +186,10 @@
 
                 if (mouseIsOver)
                     this._onMouseOverMap( map );
+
+                //Reset the maps min- and max-zoom
+                map.setMinZoom( map.options.mapSync.minZoomOriginal, true );
+                map.setMaxZoom( map.options.mapSync.maxZoomOriginal, true );
 
                 map._mapSyncSetClass();
                 map.fire("mapsyncdisabled");
