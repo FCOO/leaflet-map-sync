@@ -25,6 +25,10 @@ http://FCOO.github.io/leaflet-map-sync/demo/
             showOutline     : true, //or false
             showShadowCursor: true  //or false
             inclDisabled    : false //When true shadow-cursor and outline (if enabled) are also shown on disabled maps
+            mapIsVisible: function(map{ 
+                /* return true if map is visible */
+                return true;
+            }
 
         });
 	mapSync.add(map);

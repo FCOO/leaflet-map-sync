@@ -81,16 +81,18 @@
         },
 
         /***********************************
-        _mapSyncOptions(optionsId, testSelfEnabled)
-        Return true if mapSync[optionsId] is true and
-        check for this.options.mapSync.enabled if testSelfEnabled == true
+        _mapSyncOptions(optionsId, testVisible)
+        Return true if mapSync[optionsId] is true and check if this is vissible if testVisible == true
         ***********************************/
-        _mapSyncOptions: function(optionsId, testSelfEnabled){
+        _mapSyncOptions: function(optionsId, testVisible){
             var mapSync = this._mapSync,
                 result = mapSync &&
                          (!optionsId || mapSync.options[optionsId]);
-            if (result && testSelfEnabled)
+            if (result)
                 result = mapSync.options.inclDisabled || (this.options.mapSync && this.options.mapSync.enabled);
+            if (result && testVisible){
+                result = mapSync.options.mapIsVisible(this);
+            }
             return !!result;
         },
 
@@ -98,7 +100,7 @@
         _mapSync_showShadowCursor()
         ***********************************/
         _mapSync_showShadowCursor: function(){
-            return this._mapSyncOptions('showShadowCursor', true);
+            return this._mapSyncOptions('showShadowCursor');
         },
 
         /***********************************

@@ -50,6 +50,10 @@
                 insideMap       = this.insideMap,
                 //insideMapId     = this.insideMapId,
                 insideMapBounds = insideMap.getBounds(),
+
+                mapSync         = map._mapSync,
+                mapIsVisible    = mapSync.options.mapIsVisible,
+
                 //maxMargin = 2% of lat-lng-range to avoid two maps almost same size to be outlined inside each other
                 maxMargin       = 2 * Math.max(
                                           Math.abs( insideMapBounds.getWest() - insideMapBounds.getEast() ),
@@ -69,23 +73,24 @@
                 this.rectangle.addTo( insideMap );
             }
 
-
-            //Detect if the outline of map is visible in insideMap
-            if (displayAsDiv){
-                //Both map and insideMap is enabled => they have same center-position => check if map fits inside insideMap
-                show = !mapBounds.equals(insideMapBounds, maxMargin) && insideMapBounds.contains( mapBounds );
-                if (!show)
-                    //If map don't coner insideMap and map is zoomed out compared to outline map => show the outline
-                    show =  !mapBounds.contains( insideMapBounds ) && (map.getZoom() > insideMap.getZoom());
-            }
-            else
-                if (map._mapSync_showOutline() && insideMap._mapSync_showOutline()) {
-                    //Show if the outline of map inside insideMap is less that the container of insideMap
-                    //Scale the size of map's container to same zoom as insideMap and check if resized container of map is bigger that insideMap's container
-                    var zoomScale = map.getZoomScale( insideMap.getZoom(), map.getZoom());
-                    show = ( zoomScale*map.$container.height() < insideMap.$container.height() ) ||
-                           ( zoomScale*map.$container.width()  < insideMap.$container.width() );
+            if (mapIsVisible(map) && mapIsVisible(insideMap)){
+                //Detect if the outline of map is visible in insideMap
+                if (displayAsDiv){
+                    //Both map and insideMap is enabled => they have same center-position => check if map fits inside insideMap
+                    show = !mapBounds.equals(insideMapBounds, maxMargin) && insideMapBounds.contains( mapBounds );
+                    if (!show)
+                        //If map don't coner insideMap and map is zoomed out compared to outline map => show the outline
+                        show =  !mapBounds.contains( insideMapBounds ) && (map.getZoom() > insideMap.getZoom());
                 }
+                else
+                    if (map._mapSync_showOutline() && insideMap._mapSync_showOutline()) {
+                        //Show if the outline of map inside insideMap is less that the container of insideMap
+                        //Scale the size of map's container to same zoom as insideMap and check if resized container of map is bigger that insideMap's container
+                        var zoomScale = map.getZoomScale( insideMap.getZoom(), map.getZoom());
+                        show = ( zoomScale*map.$container.height() < insideMap.$container.height() ) ||
+                               ( zoomScale*map.$container.width()  < insideMap.$container.width() );
+                    }
+            }
 
             if (show){
                 if (displayAsDiv){

@@ -143,12 +143,12 @@
 
     function map_on_mousemove_cursor( mouseEvent ){
         //Update the position of the shadow-cursor
-        if (this._mapSyncOptions(null, true))
+        if (this._mapSyncOptions())
             this._mapSync._updateCursor( mouseEvent.latlng );
     }
 
     function map_setCursorFromMouseEvent( mouseEvent ){
-        if (this._mapSyncOptions(null, true))
+        if (this._mapSyncOptions())
             this._mapSync._setCursorFromMouseEvent( mouseEvent );
     }
 
@@ -169,7 +169,7 @@
             mapSync.timeoutId = window.setTimeout( $.proxy(map_showShadowCursorAgain, this), 500);
         }
 
-        if (this._mapSyncOptions(null, true))
+        if (this._mapSyncOptions())
             mapSync._setCursorFromElement( this._container );
     }
 
@@ -294,16 +294,18 @@
         },
 
         /***********************************
-        _mapSyncOptions(optionsId, testSelfEnabled)
-        Return true if mapSync[optionsId] is true and
-        check for this.options.mapSync.enabled if testSelfEnabled == true
+        _mapSyncOptions(optionsId, testVisible)
+        Return true if mapSync[optionsId] is true and check if this is vissible if testVisible == true
         ***********************************/
-        _mapSyncOptions: function(optionsId, testSelfEnabled){
+        _mapSyncOptions: function(optionsId, testVisible){
             var mapSync = this._mapSync,
                 result = mapSync &&
                          (!optionsId || mapSync.options[optionsId]);
-            if (result && testSelfEnabled)
+            if (result)
                 result = mapSync.options.inclDisabled || (this.options.mapSync && this.options.mapSync.enabled);
+            if (result && testVisible){
+                result = mapSync.options.mapIsVisible(this);
+            }
             return !!result;
         },
 
@@ -311,7 +313,7 @@
         _mapSync_showShadowCursor()
         ***********************************/
         _mapSync_showShadowCursor: function(){
-            return this._mapSyncOptions('showShadowCursor', true);
+            return this._mapSyncOptions('showShadowCursor');
         },
 
         /***********************************
@@ -632,6 +634,10 @@
                 insideMap       = this.insideMap,
                 //insideMapId     = this.insideMapId,
                 insideMapBounds = insideMap.getBounds(),
+
+                mapSync         = map._mapSync,
+                mapIsVisible    = mapSync.options.mapIsVisible,
+
                 //maxMargin = 2% of lat-lng-range to avoid two maps almost same size to be outlined inside each other
                 maxMargin       = 2 * Math.max(
                                           Math.abs( insideMapBounds.getWest() - insideMapBounds.getEast() ),
@@ -651,23 +657,24 @@
                 this.rectangle.addTo( insideMap );
             }
 
-
-            //Detect if the outline of map is visible in insideMap
-            if (displayAsDiv){
-                //Both map and insideMap is enabled => they have same center-position => check if map fits inside insideMap
-                show = !mapBounds.equals(insideMapBounds, maxMargin) && insideMapBounds.contains( mapBounds );
-                if (!show)
-                    //If map don't coner insideMap and map is zoomed out compared to outline map => show the outline
-                    show =  !mapBounds.contains( insideMapBounds ) && (map.getZoom() > insideMap.getZoom());
-            }
-            else
-                if (map._mapSync_showOutline() && insideMap._mapSync_showOutline()) {
-                    //Show if the outline of map inside insideMap is less that the container of insideMap
-                    //Scale the size of map's container to same zoom as insideMap and check if resized container of map is bigger that insideMap's container
-                    var zoomScale = map.getZoomScale( insideMap.getZoom(), map.getZoom());
-                    show = ( zoomScale*map.$container.height() < insideMap.$container.height() ) ||
-                           ( zoomScale*map.$container.width()  < insideMap.$container.width() );
+            if (mapIsVisible(map) && mapIsVisible(insideMap)){
+                //Detect if the outline of map is visible in insideMap
+                if (displayAsDiv){
+                    //Both map and insideMap is enabled => they have same center-position => check if map fits inside insideMap
+                    show = !mapBounds.equals(insideMapBounds, maxMargin) && insideMapBounds.contains( mapBounds );
+                    if (!show)
+                        //If map don't coner insideMap and map is zoomed out compared to outline map => show the outline
+                        show =  !mapBounds.contains( insideMapBounds ) && (map.getZoom() > insideMap.getZoom());
                 }
+                else
+                    if (map._mapSync_showOutline() && insideMap._mapSync_showOutline()) {
+                        //Show if the outline of map inside insideMap is less that the container of insideMap
+                        //Scale the size of map's container to same zoom as insideMap and check if resized container of map is bigger that insideMap's container
+                        var zoomScale = map.getZoomScale( insideMap.getZoom(), map.getZoom());
+                        show = ( zoomScale*map.$container.height() < insideMap.$container.height() ) ||
+                               ( zoomScale*map.$container.width()  < insideMap.$container.width() );
+                    }
+            }
 
             if (show){
                 if (displayAsDiv){
@@ -877,11 +884,12 @@
     ********************************************************************/
     L.MapSync = L.Class.extend({
         options: {
-            VERSION : "2.2.1",
+            VERSION : "2.3.0",
             iconName: 'hand',
             showShadowCursor: true,
             showOutline     : true,
-            inclDisabled    : false
+            inclDisabled    : false,
+            mapIsVisible    : function(/*map*/){ return true; }
         },
 
         /***********************************************************

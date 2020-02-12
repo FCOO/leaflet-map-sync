@@ -37,7 +37,7 @@
 <body style="height:100%; width:100%; margin:0; padding:0">
     <div class="container">
         <div id="map2"></div>
-        <div id="map" style="_border:2px solid green"></div>
+        <div id="map" style="border:2px solid green"></div>
         <div id="map3"></div>
     </div>
     <script src="bower_components.js"></script>
@@ -52,7 +52,11 @@
 		var mapSync= new L.MapSync({
                 showOutline     : true,
                 showShadowCursor: false,
-                inclDisabled: true
+                inclDisabled: true,
+                mapIsVisible: function(map){
+                    console.log('HER', map.options.mapSync.id);
+                    return map.NIELS;
+                }
             });
 
         var map1minzoom = 6,
@@ -85,9 +89,10 @@
 */
 
         }).setView([51.505, 11], map1zoom));
+map1.NIELS = true;
 
         //*************************************************************
-        var offset = -2;//-3;
+        var offset = +2;//-3;
 		var map2 = L.map('map2', {
             attributionControl: false,
 
@@ -98,6 +103,7 @@
             scrollWheelZoom: true,
         });
 		mapSync.add(map2, {enabled: true, zoomOffset: offset });
+map2.NIELS = true;
 
         //*************************************************************
 /*

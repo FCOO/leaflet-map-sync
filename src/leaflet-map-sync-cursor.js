@@ -143,12 +143,12 @@
 
     function map_on_mousemove_cursor( mouseEvent ){
         //Update the position of the shadow-cursor
-        if (this._mapSyncOptions(null, true))
+        if (this._mapSyncOptions())
             this._mapSync._updateCursor( mouseEvent.latlng );
     }
 
     function map_setCursorFromMouseEvent( mouseEvent ){
-        if (this._mapSyncOptions(null, true))
+        if (this._mapSyncOptions())
             this._mapSync._setCursorFromMouseEvent( mouseEvent );
     }
 
@@ -169,7 +169,7 @@
             mapSync.timeoutId = window.setTimeout( $.proxy(map_showShadowCursorAgain, this), 500);
         }
 
-        if (this._mapSyncOptions(null, true))
+        if (this._mapSyncOptions())
             mapSync._setCursorFromElement( this._container );
     }
 

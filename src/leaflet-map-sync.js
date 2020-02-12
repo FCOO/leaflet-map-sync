@@ -27,7 +27,8 @@
             iconName: 'hand',
             showShadowCursor: true,
             showOutline     : true,
-            inclDisabled    : false
+            inclDisabled    : false,
+            mapIsVisible    : function(/*map*/){ return true; }
         },
 
         /***********************************************************
