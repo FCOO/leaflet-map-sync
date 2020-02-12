@@ -221,12 +221,7 @@
 (function ($, L, window, document, undefined) {
     "use strict";
 
-    var NO_ANIMATION = {
-            animate: false,
-            reset  : true,
-            disableViewprereset: true
-        },
-        maySyncPaneOutline = 'map-sync-outline',
+    var maySyncPaneOutline = 'map-sync-outline',
         maySyncPaneCursor  = 'map-sync-cursor',
         mapSyncId          = 0;
 
@@ -242,6 +237,11 @@
 
     ***********************************************************/
     L.Map.include({
+        _mapSync_NO_ANIMATION: {
+            animate: false,
+            reset  : true,
+            disableViewprereset: true
+        },
 
         _addToMapSync: function( mapSync, options ){
             this.$container = this.$container || $(this.getContainer());
@@ -402,7 +402,7 @@
             this.options.maxZoom = maxZoom;
 
             if (this.options.mapSync.enabled)
-                    mainMap._selfSetView();//this.mainMap.getCenter(), this.mainMap.getZoom() + map.options.mapSync.zoomOffset, NO_ANIMATION );
+                    mainMap._selfSetView();
             else
                 //Adjust zoom to new min and max
                 if ((this.getZoom() > maxZoom) || (this.getZoom() < minZoom))
@@ -411,7 +411,7 @@
 
         _selfSetView: function (/*event*/) {
             // reset the map, and let setView synchronize the others.
-            this.setView(this.getCenter(), this.getZoom(), NO_ANIMATION);
+            this.setView(this.getCenter(), this.getZoom(), this._mapSync_NO_ANIMATION);
         },
 
         _syncOnMoveend: function (event) {
@@ -872,18 +872,12 @@
 (function ($, L, window, document, undefined) {
     "use strict";
 
-    var NO_ANIMATION = {
-            animate: false,
-            reset  : true,
-            disableViewprereset: true
-        };
-
     /********************************************************************
     L.MapSync
     ********************************************************************/
     L.MapSync = L.Class.extend({
         options: {
-            VERSION : "2.1.5",
+            VERSION : "2.2.0",
             iconName: 'hand',
             showShadowCursor: true,
             showOutline     : true,
@@ -924,7 +918,7 @@
             else
                 //Set no-main on-loaded maps to match the main map
                 if (!map._loaded)
-                    map.setView(this.mainMap.getCenter(), this.mainMap.getZoom() +  options.zoomOffset, NO_ANIMATION );
+                    map.setView(this.mainMap.getCenter(), this.mainMap.getZoom() +  options.zoomOffset, map._mapSync_NO_ANIMATION );
 
             //Add all events for map sync
             map._mapSync_addEvents_map();

@@ -73,6 +73,16 @@
             maxZoom:map1maxzoom,
             worldCopyJump  : true,
             scrollWheelZoom: true,
+/*
+            bsZoomControl: true,
+            bsZoomOptions: {
+                map_setView_options: {
+                    animate: false,
+                    reset  : true,
+                    disableViewprereset: true
+                }
+            }
+*/
 
         }).setView([51.505, 11], map1zoom));
 
@@ -143,6 +153,7 @@
 		}
 		map.on('click', openPopup );
 */
+
             var map2On = true;
     		map.on('click', function(){
                 map2On = !map2On;

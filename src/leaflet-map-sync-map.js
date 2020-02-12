@@ -8,12 +8,7 @@
 (function ($, L, window, document, undefined) {
     "use strict";
 
-    var NO_ANIMATION = {
-            animate: false,
-            reset  : true,
-            disableViewprereset: true
-        },
-        maySyncPaneOutline = 'map-sync-outline',
+    var maySyncPaneOutline = 'map-sync-outline',
         maySyncPaneCursor  = 'map-sync-cursor',
         mapSyncId          = 0;
 
@@ -29,6 +24,11 @@
 
     ***********************************************************/
     L.Map.include({
+        _mapSync_NO_ANIMATION: {
+            animate: false,
+            reset  : true,
+            disableViewprereset: true
+        },
 
         _addToMapSync: function( mapSync, options ){
             this.$container = this.$container || $(this.getContainer());
@@ -189,7 +189,7 @@
             this.options.maxZoom = maxZoom;
 
             if (this.options.mapSync.enabled)
-                    mainMap._selfSetView();//this.mainMap.getCenter(), this.mainMap.getZoom() + map.options.mapSync.zoomOffset, NO_ANIMATION );
+                    mainMap._selfSetView();
             else
                 //Adjust zoom to new min and max
                 if ((this.getZoom() > maxZoom) || (this.getZoom() < minZoom))
@@ -198,7 +198,7 @@
 
         _selfSetView: function (/*event*/) {
             // reset the map, and let setView synchronize the others.
-            this.setView(this.getCenter(), this.getZoom(), NO_ANIMATION);
+            this.setView(this.getCenter(), this.getZoom(), this._mapSync_NO_ANIMATION);
         },
 
         _syncOnMoveend: function (event) {

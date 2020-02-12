@@ -1,6 +1,6 @@
 {
   "name": "leaflet-map-sync",
-  "version": "2.1.5",
+  "version": "2.2.0",
   "homepage": "https://github.com/FCOO/leaflet-map-sync",
   "authors": [
     "Niels Holt"
@@ -26,6 +26,40 @@
         "dist/leaflet-src.js",
         "leaflet.css"
       ]
+    },
+    "bootstrap-select": {
+      "main": [
+        "dist/js/bootstrap-select.js"
+      ]
+    },
+    "jquery.scrollbar": {
+      "main": [
+        "jquery.scrollbar.js"
+      ]
+    },
+    "bootstrap": {
+      "dependencies": {
+        "jquery": "latest"
+      },
+      "main": [
+        "dist/js/bootstrap.bundle.js"
+      ]
+    },
+    "inputmask": {
+      "main": [
+        "dist/jquery.inputmask.bundle.js"
+      ]
+    },
+    "js-url": {
+      "main": [
+        "dist/url.min.js"
+      ]
+    },
+    "perfect-scrollbar": {
+      "main": [
+        "dist/perfect-scrollbar.js",
+        "css/perfect-scrollbar.css"
+      ]
     }
   },
   "devDependencies": {
@@ -45,5 +79,8 @@
   ],
   "moduleType": [
     "es6"
-  ]
+  ],
+  "resolutions": {
+    "bootstrap": "^4.0.0"
+  }
 }
