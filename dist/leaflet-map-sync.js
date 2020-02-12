@@ -877,7 +877,7 @@
     ********************************************************************/
     L.MapSync = L.Class.extend({
         options: {
-            VERSION : "2.2.0",
+            VERSION : "2.2.1",
             iconName: 'hand',
             showShadowCursor: true,
             showOutline     : true,
