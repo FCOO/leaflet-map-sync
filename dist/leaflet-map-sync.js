@@ -754,7 +754,8 @@
                 var outline = otherMap.options.mapSync.outlineList[thisId];
                 if (outline.show)
                     visibleOutlines.push(outline);
-            });
+            }, [], true);
+
             visibleOutlines.sort(function(outline1, outline2){ return (outline1.show?1:0) + (outline2.show?-1:0); });
 
             for (var map1Index=1; map1Index < visibleOutlines.length; map1Index++){
@@ -884,7 +885,7 @@
     ********************************************************************/
     L.MapSync = L.Class.extend({
         options: {
-            VERSION : "2.3.0",
+            VERSION : "2.3.1",
             iconName: 'hand',
             showShadowCursor: true,
             showOutline     : true,

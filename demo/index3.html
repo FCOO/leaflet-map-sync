@@ -53,7 +53,7 @@
                 showOutline     : true,
                 showShadowCursor: false,
                 inclDisabled: true,
-                mapIsVisible: function(map){
+                _mapIsVisible: function(map){
                     console.log('HER', map.options.mapSync.id);
                     return map.NIELS;
                 }
@@ -92,7 +92,7 @@
 map1.NIELS = true;
 
         //*************************************************************
-        var offset = +2;//-3;
+        var offset = -1;//+2;//-3;
 		var map2 = L.map('map2', {
             attributionControl: false,
 
@@ -102,12 +102,12 @@ map1.NIELS = true;
             worldCopyJump  : true,
             scrollWheelZoom: true,
         });
-		mapSync.add(map2, {enabled: true, zoomOffset: offset });
+		mapSync.add(map2, {enabled: false, zoomOffset: offset });
 map2.NIELS = true;
 
         //*************************************************************
-/*
-        var offset = +2;//-3;
+
+        var offset = 0;//+2;//-3;
 		var map3 = L.map('map3', {
             attributionControl: false,
 
@@ -117,8 +117,8 @@ map2.NIELS = true;
             worldCopyJump  : true,
             scrollWheelZoom: true,
         });
-		mapSync.add(map3, {enabled: false, zoomOffset: offset });
-*/
+		mapSync.add(map3, {enabled: true, zoomOffset: offset });
+
         //*************************************************************
 
         //*************************************************************
@@ -159,7 +159,7 @@ map2.NIELS = true;
 		}
 		map.on('click', openPopup );
 */
-
+/*
             var map2On = true;
     		map.on('click', function(){
                 map2On = !map2On;
@@ -176,7 +176,7 @@ map2.NIELS = true;
                 mapSync.setZoomOffset(map2, test);
             });
 
-
+*/
         });
 
         map1.setView([55.505, 12.5], map1zoom);
