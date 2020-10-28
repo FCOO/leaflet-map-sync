@@ -1,6 +1,6 @@
 {
   "name": "leaflet-map-sync",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "homepage": "https://github.com/FCOO/leaflet-map-sync",
   "authors": [
     "Niels Holt"
@@ -17,16 +17,9 @@
   "dependencies": {
     "jquery": "latest",
     "leaflet": "latest",
+    "leaflet-bugfix": "fcoo/leaflet-bugfix#^2.0.2",
     "modernizr-javascript": "FCOO/modernizr-javascript#latest",
-    "leaflet-mouseposition": "https://github.com/FCOO/leaflet-mouseposition.git#^0.1.7"
-  },
-  "overrides": {
-    "leaflet": {
-      "main": [
-        "dist/leaflet-src.js",
-        "leaflet.css"
-      ]
-    }
+    "leaflet-mouseposition": "https://github.com/FCOO/leaflet-mouseposition.git#latest"
   },
   "devDependencies": {
     "bourbon": "latest",
