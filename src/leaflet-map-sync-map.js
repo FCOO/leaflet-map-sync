@@ -285,28 +285,28 @@
         panBy
         ***********************************/
         panBy: function( panBy ) {
-            return function ( point/*, options */) {
+            return function ( point, options ) {
+
+                point = $.isArray(point) ? L.point(point) : point;
+
+                //Round point to nearst multiply of 4 to allow other maps with lower zoom to pan a hole number of pixels
+                var roundTo = this._mapSync ? this._mapSync.panBy_RoundTo : 0;
+                if (roundTo){
+                    point.x = roundTo * Math.round( point.x / roundTo);
+                    point.y = roundTo * Math.round( point.y / roundTo);
+                }
+
                 //pan the other maps if the pan is by keyboard
                 this._mapSync_allOtherMaps(
                     function( otherMap, point, thisMap ){
-                        point = $.isArray(point) ? L.point(point) : point;
                         var factor = Math.pow( 2, otherMap.getZoom() - thisMap.getZoom() );
-                        panBy.call(otherMap, point.multiplyBy( factor ));
-                    },
-                    [point, this]
-                );
-
-                this._mapSync_allOtherMaps(
-                    function( otherMap, point, thisMap ){
-                        point = $.isArray(point) ? L.point(point) : point;
-                        var factor = Math.pow( 2, otherMap.getZoom() - thisMap.getZoom() );
-                        panBy.call(otherMap, point.multiplyBy( factor ));
+                        panBy.call(otherMap, point.multiplyBy( factor ), options );
                     },
                     [point, this]
                 );
 
                 //Original function/method
-                return panBy.apply(this, arguments);
+                return panBy.call(this, point, options);
             };
         } (L.Map.prototype.panBy),
 

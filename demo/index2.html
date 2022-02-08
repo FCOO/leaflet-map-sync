@@ -39,14 +39,16 @@
 	<script src="../src/leaflet-map-sync-map.js"></script>
 	<script src="../src/leaflet-map-sync-outline.js"></script>
 	<script src="../src/leaflet-map-sync-cursor.js"></script>
+	<script src="../src/leaflet-map-sync-marker.js"></script>
 	<script src="../src/leaflet-map-sync.js"></script>
 
 	<script>
-        L.Icon.Default.imagePath = '\images';
+//        L.Icon.Default.imagePath = '\images';
 
 		var mapSync= new L.MapSync({
                 showOutline     : true,
-                showShadowCursor: true
+                showShadowCursor: true,
+                maxZoomOffset   : 3
             });
 
         var map1zoom    = 7,
@@ -71,7 +73,7 @@
         }).setView([51.505, -0.09], map1zoom));
 
         //*************************************************************
-        var offset = 0;//-3;
+        var offset = 3;//-3;
 		var map2 = L.map('map2', {
             attributionControl: false,
             minZoom: map1minzoom + offset,
@@ -80,6 +82,20 @@
             scrollWheelZoom      : true,
         });
 		mapSync.add(map2, {zoomOffset: offset });
+
+        L.marker([51.505, -0.09], {
+            draggable: true,
+            autoPan  : true,          
+            autoPanSpeed: 16,
+        })
+        
+//HER        .on('dragstart', function(){
+//HER        })
+//HER        .on('dragend', function(){
+//HER        })
+        
+        .addTo(map2);
+        
 
         //*************************************************************
 

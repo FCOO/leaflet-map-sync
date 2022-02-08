@@ -28,6 +28,7 @@
             showShadowCursor: true,
             showOutline     : true,
             inclDisabled    : false,
+            maxZoomOffset   : 2,    //Expected max different in zoom-level between any maps. No check is preformed.
             mapIsVisible    : function(/*map*/){ return true; }
         },
 
@@ -37,6 +38,9 @@
         initialize: function(options) {
             L.setOptions(this, options);
             this.list = {};
+
+            //Using maxZoomOffset to calc the number of pixels to round to when panBy is called to ensure that all maps get a hole number of x,y to pan
+            this.panBy_RoundTo = Math.pow(2, this.options.maxZoomOffset);
 
             this.enableShadowCursor( this.options.showShadowCursor );
             this.enableOutline( this.options.showOutline );

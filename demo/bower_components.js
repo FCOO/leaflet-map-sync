@@ -7344,6 +7344,7 @@
 
   			this._panRequest = requestAnimFrame(this._adjustPan.bind(this, e));
   		}
+
   	},
 
   	_onDragStart: function () {
@@ -25170,7 +25171,7 @@ return jQuery;
 
 ;
 /****************************************************************************
-	modernizr-javascript.js, 
+	modernizr-javascript.js,
 
 	(c) 2016, FCOO
 
@@ -25181,20 +25182,20 @@ return jQuery;
 
 (function ($, window, document, undefined) {
 	"use strict";
-	
+
 	var ns = window;
 
     //Extend the jQuery prototype
     $.fn.extend({
-        modernizrOn : function( test ){ 
-            return this.modernizrToggle( test, true ); 
+        modernizrOn : function( test ){
+            return this.modernizrToggle( test, true );
         },
 
-        modernizrOff: function( test ){ 
-            return this.modernizrToggle( test, false ); 
+        modernizrOff: function( test ){
+            return this.modernizrToggle( test, false );
         },
-        
-        modernizrToggle: function( test, on ){ 
+
+        modernizrToggle: function( test, on ){
 		if ( on === undefined )
             return this.modernizrToggle( test, !this.hasClass( test ) );
 

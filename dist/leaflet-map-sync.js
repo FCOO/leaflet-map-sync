@@ -498,28 +498,28 @@
         panBy
         ***********************************/
         panBy: function( panBy ) {
-            return function ( point/*, options */) {
+            return function ( point, options ) {
+
+                point = $.isArray(point) ? L.point(point) : point;
+
+                //Round point to nearst multiply of 4 to allow other maps with lower zoom to pan a hole number of pixels
+                var roundTo = this._mapSync ? this._mapSync.panBy_RoundTo : 0;
+                if (roundTo){
+                    point.x = roundTo * Math.round( point.x / roundTo);
+                    point.y = roundTo * Math.round( point.y / roundTo);
+                }
+
                 //pan the other maps if the pan is by keyboard
                 this._mapSync_allOtherMaps(
                     function( otherMap, point, thisMap ){
-                        point = $.isArray(point) ? L.point(point) : point;
                         var factor = Math.pow( 2, otherMap.getZoom() - thisMap.getZoom() );
-                        panBy.call(otherMap, point.multiplyBy( factor ));
-                    },
-                    [point, this]
-                );
-
-                this._mapSync_allOtherMaps(
-                    function( otherMap, point, thisMap ){
-                        point = $.isArray(point) ? L.point(point) : point;
-                        var factor = Math.pow( 2, otherMap.getZoom() - thisMap.getZoom() );
-                        panBy.call(otherMap, point.multiplyBy( factor ));
+                        panBy.call(otherMap, point.multiplyBy( factor ), options );
                     },
                     [point, this]
                 );
 
                 //Original function/method
-                return panBy.apply(this, arguments);
+                return panBy.call(this, point, options);
             };
         } (L.Map.prototype.panBy),
 
@@ -581,6 +581,69 @@
     }); // L.Map.include({
 
 }(jQuery, L, this, document));
+;
+/****************************************************************************
+    leaflet-map-sync-marker,
+
+    Adjusting L.Marker to work with map-sync
+****************************************************************************/
+
+(function ($, L/*, window, document, undefined*/) {
+    "use strict";
+
+
+
+    /********************************************************************
+
+
+    ********************************************************************/
+    L.Marker.prototype.options.autoPanSpeed = 8;
+    L.Marker.include({
+
+        initialize: function( initialize ) {
+            return function () {
+
+                //Original function/method
+                initialize.apply(this, arguments);
+
+                if (this.options.draggable)
+                    this.on('dragend', this._syncOnDragend);
+
+            };
+        } (L.Marker.prototype.initialize),
+
+
+        _syncOnDragend: function(){
+            var map = this._map;
+            if (map && map._mapSync)
+                map._selfSetView();
+        },
+/*
+        addTo: function( addTo ) {
+            return function () {
+
+                //Original function/method
+                return addTo.apply(this, arguments);
+            };
+        } (L.Marker.prototype.addTo),
+*/
+
+
+    });
+
+/*
+                this._mapSync_allOtherMaps(
+                    function( otherMap, thisMap, center ){
+                        //otherMap._resetView(center, otherMap.getZoom());
+                    },
+                    [this, this.getCenter()]
+                );
+
+*/
+
+}(jQuery, L, this, document));
+
+
 ;
 /****************************************************************************
     leaflet-map-sync-outline
@@ -885,11 +948,12 @@
     ********************************************************************/
     L.MapSync = L.Class.extend({
         options: {
-            VERSION : "2.3.3",
+            VERSION : "2.4.0",
             iconName: 'hand',
             showShadowCursor: true,
             showOutline     : true,
             inclDisabled    : false,
+            maxZoomOffset   : 2,    //Expected max different in zoom-level between any maps. No check is preformed.
             mapIsVisible    : function(/*map*/){ return true; }
         },
 
@@ -899,6 +963,9 @@
         initialize: function(options) {
             L.setOptions(this, options);
             this.list = {};
+
+            //Using maxZoomOffset to calc the number of pixels to round to when panBy is called to ensure that all maps get a hole number of x,y to pan
+            this.panBy_RoundTo = Math.pow(2, this.options.maxZoomOffset);
 
             this.enableShadowCursor( this.options.showShadowCursor );
             this.enableOutline( this.options.showOutline );
