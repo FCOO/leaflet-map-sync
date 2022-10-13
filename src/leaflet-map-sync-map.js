@@ -200,16 +200,16 @@
 
         _selfSetView: function (/*event*/) {
             // reset the map, and let setView synchronize the others.
-            this.setView(this.getCenter(), this.getZoom(), this._mapSync_NO_ANIMATION);
+            this.setView(this.wrapLatLng( this.getCenter() ), this.getZoom(), this._mapSync_NO_ANIMATION);
         },
 
-        _syncOnMoveend: function (event) {
+        _syncOnMoveend: function (/*event*/) {
             if (this._syncDragend) {
                 // This is 'the moveend' after the dragend.
                 // Without inertia, it will be right after,
                 // but when inertia is on, we need this to detect that.
                 this._syncDragend = false; // before calling setView!
-                this._selfSetView(event);
+                this._selfSetView(/*event*/);
 
                 this._mapSync_allOtherMaps( function(otherMap) { otherMap.fire('moveend'); } );
             }

@@ -413,16 +413,16 @@
 
         _selfSetView: function (/*event*/) {
             // reset the map, and let setView synchronize the others.
-            this.setView(this.getCenter(), this.getZoom(), this._mapSync_NO_ANIMATION);
+            this.setView(this.wrapLatLng( this.getCenter() ), this.getZoom(), this._mapSync_NO_ANIMATION);
         },
 
-        _syncOnMoveend: function (event) {
+        _syncOnMoveend: function (/*event*/) {
             if (this._syncDragend) {
                 // This is 'the moveend' after the dragend.
                 // Without inertia, it will be right after,
                 // but when inertia is on, we need this to detect that.
                 this._syncDragend = false; // before calling setView!
-                this._selfSetView(event);
+                this._selfSetView(/*event*/);
 
                 this._mapSync_allOtherMaps( function(otherMap) { otherMap.fire('moveend'); } );
             }
@@ -618,28 +618,8 @@
             if (map && map._mapSync)
                 map._selfSetView();
         },
-/*
-        addTo: function( addTo ) {
-            return function () {
-
-                //Original function/method
-                return addTo.apply(this, arguments);
-            };
-        } (L.Marker.prototype.addTo),
-*/
-
 
     });
-
-/*
-                this._mapSync_allOtherMaps(
-                    function( otherMap, thisMap, center ){
-                        //otherMap._resetView(center, otherMap.getZoom());
-                    },
-                    [this, this.getCenter()]
-                );
-
-*/
 
 }(jQuery, L, this, document));
 
@@ -948,7 +928,7 @@
     ********************************************************************/
     L.MapSync = L.Class.extend({
         options: {
-            VERSION : "2.4.0",
+            VERSION : "2.4.1",
             iconName: 'hand',
             showShadowCursor: true,
             showOutline     : true,
@@ -994,7 +974,7 @@
             else
                 //Set no-main on-loaded maps to match the main map
                 if (!map._loaded)
-                    map.setView(this.mainMap.getCenter(), this.mainMap.getZoom() +  options.zoomOffset, map._mapSync_NO_ANIMATION );
+                    map.setView(map.wrapLatLng(this.mainMap.getCenter()), this.mainMap.getZoom() +  options.zoomOffset, map._mapSync_NO_ANIMATION );
 
             //Add all events for map sync
             map._mapSync_addEvents_map();

@@ -34,28 +34,8 @@
             if (map && map._mapSync)
                 map._selfSetView();
         },
-/*
-        addTo: function( addTo ) {
-            return function () {
-
-                //Original function/method
-                return addTo.apply(this, arguments);
-            };
-        } (L.Marker.prototype.addTo),
-*/
-
 
     });
-
-/*
-                this._mapSync_allOtherMaps(
-                    function( otherMap, thisMap, center ){
-                        //otherMap._resetView(center, otherMap.getZoom());
-                    },
-                    [this, this.getCenter()]
-                );
-
-*/
 
 }(jQuery, L, this, document));
 

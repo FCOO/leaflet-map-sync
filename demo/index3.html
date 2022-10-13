@@ -56,7 +56,6 @@
                 inclDisabled: true,
                 _mapIsVisible: function(map){
                     console.log('HER', map.options.mapSync.id);
-                    return map.NIELS;
                 }
             });
 
@@ -72,7 +71,27 @@
 
 
 		//*************************************************************
-        var map1 = mapSync.add(L.map('map', {
+
+    /*************************************************
+    Adding onmoveend to adjust map.center.lng to range -180 -> +180
+    *************************************************/
+    function onMoveEnd(event){
+        var center      = this.getCenter(),
+            wrapCenter  = this.wrapLatLng( center );
+
+        if ((center.lng != wrapCenter.lng) || (center.lat != wrapCenter.lat))
+            this.setView( wrapCenter, this.getZoom(), {animate: false, reset: true, disableViewprereset: true});
+    }
+    L.Map.addInitHook(function () {
+        this.on('moveend', onMoveEnd);
+    });
+
+
+        
+//        var addToMapSync = false; 
+        var addToMapSync = true;
+
+        var map1 = L.map('map', {
             attributionControl: false,
             minZoom: map1minzoom,
             maxZoom:map1maxzoom,
@@ -88,9 +107,13 @@
                 }
             }
 */
+        }).setView([51.505, 11], map1zoom);
 
-        }).setView([51.505, 11], map1zoom));
-map1.NIELS = true;
+        if (addToMapSync)
+            mapSync.add( map1 );
+        else
+            L.tileLayer(globalLayerUrl, {}).addTo(map1);
+
 
         //*************************************************************
         var offset = -1;//+2;//-3;
@@ -103,8 +126,8 @@ map1.NIELS = true;
             worldCopyJump  : true,
             scrollWheelZoom: true,
         });
-		mapSync.add(map2, {enabled: false, zoomOffset: offset });
-map2.NIELS = true;
+        if (addToMapSync)
+            mapSync.add(map2, {enabled: false, zoomOffset: offset });
 
         //*************************************************************
 
@@ -118,7 +141,8 @@ map2.NIELS = true;
             worldCopyJump  : true,
             scrollWheelZoom: true,
         });
-		mapSync.add(map3, {enabled: true, zoomOffset: offset });
+        if (addToMapSync)
+            mapSync.add(map3, {enabled: true, zoomOffset: offset });
 
         //*************************************************************
 

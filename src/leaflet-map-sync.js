@@ -69,7 +69,7 @@
             else
                 //Set no-main on-loaded maps to match the main map
                 if (!map._loaded)
-                    map.setView(this.mainMap.getCenter(), this.mainMap.getZoom() +  options.zoomOffset, map._mapSync_NO_ANIMATION );
+                    map.setView(map.wrapLatLng(this.mainMap.getCenter()), this.mainMap.getZoom() +  options.zoomOffset, map._mapSync_NO_ANIMATION );
 
             //Add all events for map sync
             map._mapSync_addEvents_map();
