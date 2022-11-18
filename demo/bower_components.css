@@ -656,3 +656,45 @@ svg.leaflet-image-layer.leaflet-interactive path {
 		print-color-adjust: exact;
 		}
 	}
+
+/***********************************************
+	modernizr-mouse-events.scss,
+
+	(c) 2018, FCOO
+
+	https://github.com/FCOO/modernizr-mouse-events
+	https://github.com/FCOO
+
+
+************************************************/
+html.mouse .hide-for-mouse {
+  display: none !important; }
+
+html.mouse .show-for-no-mouse {
+  display: none !important; }
+
+html.no-mouse .show-for-mouse {
+  display: none !important; }
+
+html.no-mouse .hide-for-no-mouse {
+  display: none !important; }
+
+html.mouse-hover .hide-for-mouse-hover {
+  display: none !important; }
+
+html.mouse-hover .show-for-no-mouse-hover {
+  display: none !important; }
+
+html.no-mouse-hover .show-for-mouse-hover {
+  display: none !important; }
+
+html.no-mouse-hover .hide-for-no-mouse-hover {
+  display: none !important; }
+
+._test-for-hover_ {
+  display: none;
+  font-family: "__NO_HOVER_SUPPORT__"; }
+
+@media (hover: hover) {
+  ._test-for-hover_ {
+    font-family: "__HOVER_SUPPORT__"; } }

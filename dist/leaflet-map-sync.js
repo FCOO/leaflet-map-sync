@@ -269,7 +269,7 @@
 
                 this.createPane(maySyncPaneCursor);
                 this.maySyncPaneCursor = this.getPane(maySyncPaneCursor);
-                $(this.maySyncPaneCursor).addClass('show-for-leaflet-map-sync-cursor');
+                $(this.maySyncPaneCursor).addClass('show-for-leaflet-map-sync-cursor show-for-mouse-hover');
 
                 this.whenReady( function(){
                     var zIndex = parseInt($(this.getPanes().popupPane).css('z-index'));
@@ -928,7 +928,7 @@
     ********************************************************************/
     L.MapSync = L.Class.extend({
         options: {
-            VERSION : "2.4.1",
+            VERSION : "2.4.2",
             iconName: 'hand',
             showShadowCursor: true,
             showOutline     : true,
